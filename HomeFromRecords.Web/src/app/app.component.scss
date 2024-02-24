@@ -1,0 +1,25 @@
+.app-container {
+    align-items: space-between;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-main-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    padding: 15px 0px 0px 25px;
+    width: 100%;
+}
+
+.footer-container {
+    width: 100%;
+}
+
+@media (max-width: 650px) {
+    .sidebar-container {
+        display: none;
+    }
+}

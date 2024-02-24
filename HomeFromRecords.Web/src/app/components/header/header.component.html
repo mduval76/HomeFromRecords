@@ -1,0 +1,42 @@
+<mat-toolbar class="header-content">
+  <img src="./assets/images/logos/logo.png" alt="logo" routerLink="/home" class="header-logo">
+  <div class="searchbar-menu-container">
+      <div class="searchbar-container">
+          <input class="searchbar-input" type="text" [(ngModel)]="searchQuery" placeholder="Search" />
+          <button class="searchbar-button" (click)="onSearch(searchQuery)">
+              <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <button mat-icon-button class="hamburger" [matMenuTriggerFor]="menu" #trigger="matMenuTrigger">
+              <mat-icon>menu</mat-icon>
+          </button>
+      </div>
+      <div class="menu-container">
+          <a mat-button routerLink="/home">Home</a>
+          <a mat-button routerLink="/catalog">Catalog</a>
+          <a mat-button routerLink="/cart">Cart</a>
+          <a mat-button routerLink="/account">Account</a>
+          <a mat-button routerLink="/about" *ngIf="(authService.isAdmin$ | async) === false">About</a>
+          <a mat-button routerLink="/new-item-form" *ngIf="authService.isAdmin$ | async">Add item</a>
+      </div>
+      <mat-menu #menu="matMenu">
+          <button mat-menu-item routerLink="/home">
+            <span>Home</span>
+          </button>
+          <button mat-menu-item routerLink="/catalog">
+            <span>Catalog</span>
+          </button>
+          <button mat-menu-item routerLink="/cart">
+            <span>Cart</span>
+          </button>
+          <button mat-menu-item routerLink="/account">
+            <span>Account</span>
+          </button>
+          <button mat-menu-item routerLink="/about" *ngIf="(authService.isAdmin$ | async) === false">
+            <span>About</span>
+          </button>
+          <button mat-menu-item routerLink="/new-item-form" *ngIf="authService.isAdmin$ | async">
+            <span>Add item</span>
+          </button>
+      </mat-menu>
+  </div>
+</mat-toolbar>

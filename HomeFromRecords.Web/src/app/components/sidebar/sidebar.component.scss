@@ -1,0 +1,78 @@
+.sidebar-container {
+    background-color: white;
+    height: 100%;
+    max-width: 15em;
+}
+
+.sidebar {
+    border-right: 3px solid lightskyblue;
+    width: 7.5vw;
+} 
+
+.sidebar img {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin: auto;
+    margin-bottom: 2vh;
+    width: 7.5vh;
+    transition: transform 0.3s ease;
+}
+
+.sidebar img:hover {
+    cursor: pointer;
+    transform: scale(1.25);
+    transition: transform 0.3s ease;
+}
+
+.sidebar button {
+    font-size: 0.75vw;
+    margin: 5% 15% 25%;
+}
+
+.sidebar-content {
+    height: 100%;
+}
+
+.sidebar-content button {
+    color: lightskyblue;
+    font-size: 2rem;
+}
+
+.toggle-btn {
+    background-color: transparent;
+    border: none;
+    color: lightskyblue;
+    cursor: pointer;
+    font-size: 2rem;
+    margin-left: 2.5px;
+}
+
+hr {
+    width: 90%;
+}
+
+@media (max-width: 950px) {
+
+    .sidebar button {
+        font-size: 1.5vw;
+        margin: 5% 15% 25%;
+    }
+
+    .sidebar {
+        width: 15vw;
+    } 
+}
+
+@media (max-width: 650px) {
+    .sidebar {
+        overflow: hidden;
+        width: 25vw;
+    }
+
+    .sidebar button {
+        font-size: 2.5vw;
+        margin: 5% 5% 25%;
+    }
+    
+}

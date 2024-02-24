@@ -1,0 +1,262 @@
+.display-container {
+    height: 100%;
+    width: 100%;
+}
+
+.title {
+    padding: 2.5%;
+    width: 100%;
+}
+
+.grid {
+    height: 100%;
+    margin: auto;
+    width: 80%;
+}
+
+.item-card {
+    border: none;
+    height: 100%;
+    width: 100%;
+}
+
+.item-card img {
+    margin-bottom: 25px;
+    transition: transform 0.3s ease;
+}
+
+.item-card img:hover {
+    cursor: pointer;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.image-wrapper {
+    padding-right: 25%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.square-format, .default-format {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.wide-format {
+    width: 100%;
+    object-fit: cover;
+    padding-bottom: 10%;
+}
+
+.tall-format {
+    height: 56.5%;
+    object-fit: contain;
+}
+
+.type-icon {
+    background-size: cover;
+}
+
+.detail-btn:hover, .cart-btn:hover {
+    cursor: pointer;
+}
+
+.detail-btn {
+    background-color: rgb(49, 157, 224);
+    border: none;
+    border-radius: 7.5px;
+    color: white;
+    font-size: 1em;
+    padding: 15px;
+}
+
+.detail-btn:hover {
+    background-color: rgb(49, 157, 224, 0.75);
+}
+
+.detail-btn:active {
+    background-color: rgba(14, 119, 184, 1.0);
+}
+
+.cart-btn {
+    background-color: rgb(66, 204, 66);
+    border: none;
+    border-radius: 7.5px;
+    color: white;
+    font-size: 1.25em;
+    margin-left: 15px;
+}
+
+.cart-btn:hover {
+    background-color: rgb(66, 204, 66, 0.75);
+}
+
+.cart-btn:active {
+    background-color: rgb(7, 151, 7);
+}
+
+.x-btn {
+    background-color: rgb(172, 18, 18);
+    border: none;
+    border-radius: 7.5px;
+    color: white;
+    font-size: 1.25em;
+    margin-left: 15px;
+    padding: 14px 17px 12px 17px ;
+}
+
+.pagination-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+}
+
+.pagination-container span {
+    margin: 25px;
+}
+
+.pagination-container button {
+    background-color: grey;
+    border: none;
+    border-radius: 7.5px;
+    color: white;
+    cursor: pointer;
+    font-size: x-large;
+    margin-bottom: 2.5vh;
+    padding: 15px;
+}
+
+.pagination-container button:hover {
+    background-color: rgb(128, 128, 128, 0.75);
+}
+
+.pagination-container button:active {
+    background-color: rgb(128, 128, 128, 1.0);
+}
+
+hr {
+    margin: 25px 0px;
+    width: 77.5%;
+}
+
+mat-card-actions {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+mat-card-actions button {
+    border-radius: 10px;
+    display: flex;
+    padding: 15px;
+}
+
+mat-card-actions span {
+    font-family: Centaur;
+    font-size: 2vw;
+    font-weight: bold;
+}
+
+mat-card-content {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+}
+
+mat-card-header {
+    background-color: rgb(212, 238, 255);
+    padding: 25px;
+}
+
+mat-card-title {
+    font-family: Centaur;
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+mat-card-title a {
+    cursor: pointer;
+}
+
+mat-card-title a:hover {
+    color: rgb(82, 99, 252) !important;
+}
+
+mat-card-title a:active {
+    color: rgb(17, 17, 141) !important;
+}
+
+mat-card-subtitle {
+    font-size: 1vw;
+}
+
+@media (max-width: 950px) {
+    .grid, .pagination-container {
+    margin-left: 1.5vw;
+    width: 90%;
+    }
+
+    mat-card-actions span {
+        font-size: 3.25vw;
+    }
+
+    mat-card-header {
+        padding: 15px;
+    }
+
+    mat-card-title {
+        font-size: 3vw;
+    }
+
+    mat-card-subtitle {
+        font-size: 1.5vw;
+    }
+}
+
+@media (max-width: 650px) {
+    .grid, .pagination-container {
+        margin-left: 0vw;
+        width: 90%;
+    }
+
+    .title {
+        padding: 5% 20%;
+    }
+
+    .type-icon {
+        display: none;
+    }
+
+    .detail-btn {
+        padding: 10px;
+    }
+
+    .cart-btn {
+        font-size: 0.75em;
+    }
+
+    .pagination-container button {
+        padding: 10px;
+    }
+
+    .pagination-container span {
+        margin: 10px;
+    }
+
+    mat-card-actions span {
+        font-size: 5.5vw;
+    }
+
+    mat-card-title {
+        font-size: 6vw;
+    }
+
+    mat-card-subtitle {
+        font-size: 3vw;
+    }
+}

@@ -1,0 +1,135 @@
+// DEFAULT
+.header-content {
+    background-color: black;
+    border-bottom: 5px solid lightskyblue;
+    display: flex;
+    height: 150px;
+    padding: 25px 25px 25px 10px;
+    width: 100%;
+}
+
+.header-content .header-logo {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.header-logo {
+    cursor: pointer;
+}
+
+.searchbar-menu-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    width: 100%;
+}
+
+.searchbar-container {
+    background-color: transparent;
+    display: flex;
+    margin: 2% 2% 2% 3%;
+    width: 100%;
+}
+
+.searchbar-input, .searchbar-button {
+    background-color: rgba(66, 73, 82, 0.788);
+    font-size: large;
+}
+
+.searchbar-input {
+    border-radius: 25px 0 0 25px;
+    color: lightskyblue;
+    min-width: 85%;
+    padding: 20px 0px 20px 25px;
+}
+
+.searchbar-button {
+    display: flex;
+    color: lightskyblue;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 25px 25px 0;
+    width: 15%;
+}
+
+.menu-container {
+    display: flex;
+    font-size: 1.5vw;
+    justify-content: space-between;
+    padding: 0px 20px 0px 20px;
+    width: 100%;
+}
+
+.menu-container > a {
+    color: whitesmoke;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.hamburger {
+    display: none;
+}
+
+// MEDIA QUERIES
+@media (max-width: 950px) {
+    .searchbar-menu-container {
+        align-items: center; 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        margin: 2.5% 1.5% 1.5% 2%;
+        width: 90%;
+    }
+
+    .searchbar-input {
+        padding: 15px 0px 15px 20px;
+    }
+
+    .menu-container {
+        font-size: 2vw;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+}
+
+@media (max-width: 650px) {
+    .header-content {
+        flex-direction: column;
+        height: 22.5%;
+        padding: 15px;
+    }
+
+    .header-content .header-logo {
+        max-height: 5%;
+    }
+
+    .searchbar-menu-container {
+        margin: 1.5%;
+        width: 100%;
+    }
+
+    .searchbar-input {
+        min-width: 65%;
+    }
+    
+    .searchbar-button {
+        min-width: 15%;
+    }
+
+    .menu-container {
+        display: none;
+    }
+
+    .hamburger {
+        align-items: center;
+        background-color: rgba(66, 73, 82, 0.788);
+        border-radius: 10px;
+        color: lightskyblue;
+        display: flex;
+        font-size: 2vw;
+        justify-content: center;
+        margin-left: 3%;
+        min-width: 15%;
+    }
+}

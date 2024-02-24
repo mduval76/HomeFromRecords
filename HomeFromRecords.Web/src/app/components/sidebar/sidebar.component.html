@@ -1,0 +1,24 @@
+
+<mat-drawer-container class="sidebar-container">
+  <mat-drawer #drawer class="sidebar" mode="side" (openedChange)="isOpened = drawer.opened">
+    <button mat-button [matMenuTriggerFor]="menu">Sorting by {{mainCriteria}}</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="setMainSortCriteria('Artist')">Artist</button>
+      <button mat-menu-item (click)="setMainSortCriteria('Album')">Album</button>
+      <button mat-menu-item (click)="setMainSortCriteria('Reset')">Reset</button>
+    </mat-menu>
+    <img src="../../../assets/images/icons/all.png" (click)="setFormatSortCriteria(666)">
+    <img src="../../../assets/images/icons/LP.png" (click)="setFormatSortCriteria(0)">
+    <img src="../../../assets/images/icons/CD.png" (click)="setFormatSortCriteria(1)">
+    <img src="../../../assets/images/icons/K7.png" (click)="setFormatSortCriteria(2)">
+    <img src="../../../assets/images/icons/ABC.png" (click)="setAlphaSortCriteria('ascending')">
+    <img src="../../../assets/images/icons/ZYX.png" (click)="setAlphaSortCriteria('descending')">
+    <img src="../../../assets/images/icons/lohi.png" (click)="setPriceSortCriteria('ascending')">
+    <img src="../../../assets/images/icons/hilo.png" (click)="setPriceSortCriteria('descending')">
+  </mat-drawer>
+  <div *ngIf="displayComponentActive" class="sidebar-content">
+    <button type="button" class="toggle-btn" (click)="drawer.toggle(); isOpened = !isOpened">
+      <i class="fa-regular" [class.fa-square-caret-right]="!isOpened" [class.fa-square-caret-left]="isOpened"></i>
+    </button>
+  </div>
+</mat-drawer-container>

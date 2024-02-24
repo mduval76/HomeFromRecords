@@ -1,0 +1,123 @@
+.login-form-container {
+    background-color: black;
+    border-radius: 25px;
+    margin: auto;
+    margin-top: 0.75%;
+    width: 60%;
+}
+
+.login-fields-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 5%;
+}
+
+.login-fields-container p {
+    color: white;
+    font-size: 1rem;
+    margin: 0;
+    justify-content: center;
+}
+
+.name-fields-container, .email-phone-fields-container, .pwd-fields-container, 
+.city-region-fields-container, .country-postal-fields-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.first-name-field, .last-name-field, 
+.email-reg-field, .phone-field,
+.pwd-reg-field, .confirm-pwd-field,
+.city-field, .region-field, .country-field, .postal-field {
+    flex: 1;
+}
+
+.first-name-field, .email-reg-field, .pwd-reg-field, .city-field, .country-field  {
+    margin-right: 1%;
+    margin-bottom: 10px;
+}
+
+.last-name-field, .phone-field, .confirm-pwd-field, .region-field, .postal-field {
+    margin-left: 1%;
+    margin-bottom: 10px;
+}
+
+.username-field, .email-log-field, .street-field {
+    margin-bottom: 10px;
+}
+
+.btn-invite-container {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit-btn {
+    background-color: lightskyblue;
+    border-radius: 10px;
+    color: black;
+    font-size: 1.5rem;
+    padding: 10px;
+}
+
+.submit-btn:hover {
+    background-color: rgb(199, 233, 255);
+}
+
+.submit-btn:active {
+    background-color: rgb(58, 164, 235);
+}
+
+.clear-btn {
+    background-color:  rgb(238, 61, 49);
+    border-radius: 10px;
+    color: black;
+    font-size: 1.5rem;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.clear-btn:hover {
+    background-color:  rgb(243, 107, 98);
+}
+
+.clear-btn:active {
+    background-color:  rgb(165, 12, 1);
+}
+
+.switch-form-link {
+    color: lightskyblue;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: underline;
+}
+
+.account-logo {
+    margin: 2%;
+}
+
+.title {
+    align-items: center;
+    display: flex;
+    height: 15%;
+    margin: 5% 5% 0%;
+}
+
+.logout-container {
+    font-size: 1rem;
+    margin: 2% 21%;
+}
+
+.logout-link {
+    color: rgba(0, 157, 255, 0.884);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+h1 {
+    color: rgb(161, 153, 153);
+    font-size: 2rem;
+    margin: 0;
+}

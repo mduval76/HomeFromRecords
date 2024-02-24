@@ -1,0 +1,171 @@
+.new-item-form-container {
+    display: flex;
+    margin: auto;
+    width: 85%;
+}
+
+.title {
+    align-items: center;
+    display: flex;
+    height: 15%;
+    margin-left: 5%;
+}
+
+.first-half-form, .second-half-form {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.first-half-form {
+    margin-right: 1%;
+    width: 50%;
+}
+
+.second-half-form {
+    margin-left: 1%;
+    width: 50%;
+}
+
+.price-quantity-container, .country-year-container, .catalog-matrix-container,
+.image-file-container, .format-selection-container, .sub-format-length-container,
+.type-package-container, .genre-container, .grade-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.format-selection-container, .sub-format-length-container, .type-package-container,
+.genre-container, .grade-container, .details-container {
+    width: 100%;
+}
+
+.price-quantity-container mat-form-field,
+.country-year-container mat-form-field,
+.catalog-matrix-container mat-form-field,
+.format-selection-container mat-form-field,
+.sub-format-length-container mat-form-field,
+.type-package-container mat-form-field,
+.genre-container mat-form-field,
+.grade-container mat-form-field {
+    width: 48%;
+}
+
+.image-file-container mat-form-field {
+    width: 80%;
+}
+
+.custom-file-upload {
+    align-items: center;
+    background-color:  rgba(66, 73, 82, 0.788);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    font-size: x-large;
+    height: 57.5px;
+    justify-content: center;
+    margin-left: 15px;
+    min-width: 16%;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.button-container > button {
+    align-items: center;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.5rem;
+    height: 57.5px;
+    justify-content: center;
+    width: 17.5%;
+    padding: 10px;
+}
+
+.submit-btn {
+    background-color:  rgb(40, 140, 200);
+    width: 15%;
+}
+
+.submit-btn:hover {
+    background-color:  rgb(91, 179, 235);
+}
+
+.submit-btn:active {
+    background-color:  rgb(0, 96, 156);
+}
+
+.clear-btn {
+    align-items: center;
+    background-color:  rgb(238, 61, 49);
+    margin-left: 20px;
+}
+
+.clear-btn:hover {
+    background-color:  rgb(243, 107, 98);
+}
+
+.clear-btn:active {
+    background-color:  rgb(165, 12, 1);
+}
+
+.details-field, .matrix-field {
+    min-height: 100px;
+}
+
+@media (max-width: 950px)  {
+    .new-item-form-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title {
+        height: 10%;
+    }
+    
+    .first-half-form  {
+        margin-right: 0%;
+        width: 97.5%;
+    }
+
+    .second-half-form {
+        margin-left: 0%;
+        width: 97.5%;
+    }
+}
+
+@media (max-width: 650px) {
+    .title {
+        height: 7.5%;
+    }
+
+    .price-quantity-container, .country-year-container, .catalog-matrix-container,
+    .format-selection-container, .sub-format-package-container, .type-length-container,
+    .genre-container, .grade-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .price-quantity-container mat-form-field,
+    .country-year-container mat-form-field,
+    .catalog-matrix-container mat-form-field,
+    .format-selection-container mat-form-field,
+    .sub-format-package-container mat-form-field,
+    .type-length-container mat-form-field,
+    .genre-container mat-form-field,
+    .grade-container mat-form-field {
+        width: 100%;
+    }
+
+    .mainFormat-field {
+        width: 100% !important;
+    }
+}
