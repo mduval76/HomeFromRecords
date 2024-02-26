@@ -100,18 +100,32 @@ export class FormatService {
     return this.formattedArtistName;
   }
 
-  formatDetails(str: string): string[] {
-    var details = str.split(";").map(detail => detail.trim()).filter(detail => detail.length > 0);
-
-    details.forEach((detail: string) => {
+  formatDetails(str: string): { details: string[], subDetails: Map<string, string[]> } {
+    let detailsList = str.split(";").map(detail => detail.trim()).filter(detail => detail.length > 0);
+    let subDetailsMap = new Map<string, string[]>();
+  
+    let formattedDetails = detailsList.map(detail => {
       if (detail.startsWith("Includes:")) {
-        this.includesSubstringFormatting = true;
-        let subDetails = detail.slice("Includes:".length).trim();
-        this.formattedSubDetails = subDetails.split(",").map(subDetail => subDetail.trim()).filter(subDetail => subDetail.length > 0);
+        let { mainDetail, subDetails } = this.formatSubDetails(detail);
+        subDetailsMap.set(mainDetail, subDetails);
+        return mainDetail;
       }
+      return detail;
     });
+  
+    return { details: formattedDetails, subDetails: subDetailsMap };
+  }
 
-    return details;
+  formatSubDetails(detail: string): { mainDetail: string, subDetails: string[] } {
+    if (!detail.startsWith("Includes:")) {
+      return { mainDetail: detail, subDetails: [] };
+    }
+  
+    this.includesSubstringFormatting = true;
+    let subDetails = detail.slice("Includes:".length).trim();
+    let formattedSubDetails = subDetails.split(",").map(subDetail => subDetail.trim()).filter(subDetail => subDetail.length > 0);
+  
+    return { mainDetail: "Includes:", subDetails: formattedSubDetails };
   }
 
   swapSubstrings(substr1: string, substr2: string): string {

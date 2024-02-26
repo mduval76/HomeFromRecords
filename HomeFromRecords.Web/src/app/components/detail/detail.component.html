@@ -274,17 +274,19 @@
                     <td class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Details')"></i></td>
                     <td colspan="6" *ngIf="!activeFields['Details']">
                         <ul class="formatted-details-container">
-                            <li *ngFor="let detail of formattedDetails">
-                                <span *ngIf="!includesSubstringFormatting || !detail.startsWith('Includes:')">
+                            <ng-container *ngFor="let detail of formattedDetails">
+                                <li *ngIf="!formattedSubDetails.has(detail)">
                                     {{ detail }}
-                                </span>
-                                <span *ngIf="includesSubstringFormatting && detail.startsWith('Includes:')">
-                                    Includes:
-                                    <ul>
-                                        <li id="subdetail" *ngFor="let subDetail of formattedSubDetails">{{ subDetail }}</li>
+                                </li>
+                                <li *ngIf="formattedSubDetails.has(detail)">
+                                    {{ detail }}
+                                    <ul class="sub-details-list">
+                                    <li *ngFor="let subDetail of formattedSubDetails.get(detail)">
+                                        {{ subDetail }}
+                                    </li>
                                     </ul>
-                                </span>
-                            </li>
+                                </li>
+                            </ng-container>
                         </ul>
                     </td>
                     <td colspan="6" *ngIf="activeFields['Details']" [ngClass]="{'formatted-details-updating': activeFields}">

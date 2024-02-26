@@ -34,7 +34,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   enums: any = {};
   formattedArtistName: string = '';
   formattedDetails: string[] = [];
-  formattedSubDetails: string[] = [];
+  formattedSubDetails: Map<string, string[]> = new Map();
   includesSubstringFormatting: boolean = false;
   isAdmin: boolean = false;
   nameLength: number = 0;
@@ -193,11 +193,14 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   // Helper functions
   private updateItem(newLocalIndex: number): void {
-    if (this.dataReady) { 
+    if (this.dataReady) {
       this.data.currentIndex = newLocalIndex;
       this.data.selectedItem = this.data.items[this.data.currentIndex];
       this.formattedArtistName = this.formatService.formatArtistName(this.data.selectedItem.artistName);
-      this.formattedDetails = this.formatService.formatDetails(this.data.selectedItem.details);
+      
+      const formattedResult = this.formatService.formatDetails(this.data.selectedItem.details);
+      this.formattedDetails = formattedResult.details;
+      this.formattedSubDetails = formattedResult.subDetails;
       this.updateFontSizeClass();
     }
   }
