@@ -36,7 +36,7 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
-        public async Task<Album> GetAlbumsByArtistNameAlbumTitleLabelIdAsync(string artistName, string title, string labelName) {
+        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName) {
             try {
                 var artist = await _context.Artists
                     .Where(a => a.ArtistName.ToLower() == artistName.ToLower())

@@ -7,7 +7,7 @@ namespace HomeFromRecords.Core.Interfaces {
     public interface IAlbum {
         Task<Album> GetAlbumByIdAsync(Guid albumId);
         Task<Album> GetAlbumByTitleAsync(string title);
-        Task<Album> GetAlbumsByArtistNameAlbumTitleLabelIdAsync(string artistName, string title, string labelName);
+        Task<Album> CheckForDoubles(string artistName, string title, string labelName);
         Task<IEnumerable<Album>> GetAllAlbumsAsync();
         Task<IEnumerable<Album>> GetAlbumsByArtistIdAsync(Guid artistId, int? albumFormat = null);
         Task<IEnumerable<Album>> GetAlbumsByCountryAsync(string country);
