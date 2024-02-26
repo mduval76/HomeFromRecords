@@ -36,15 +36,19 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
-        public async Task<Album> GetAlbumsByArtistNameAndAlbumTitleAsync(string artistName, string title) {
+        public async Task<Album> GetAlbumsByArtistNameAlbumTitleLabelIdAsync(string artistName, string title, string labelName) {
             try {
                 var artist = await _context.Artists
                     .Where(a => a.ArtistName.ToLower() == artistName.ToLower())
                     .FirstOrDefaultAsync();
 
+                var label = await _context.RecordLabels
+                    .Where(r => r.RecordLabelName.ToLower() == labelName.ToLower())
+                    .FirstOrDefaultAsync();
+
                 if (artist != null) {
                     var album = await _context.Albums
-                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower())
+                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label.RecordLabelId)
                         .FirstOrDefaultAsync();
 
                     return album;

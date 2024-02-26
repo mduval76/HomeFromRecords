@@ -134,7 +134,7 @@ namespace HomeFromRecords.Core.Controllers {
                 var artist = await CheckExistingArtist(albumSubmit);
                 var recordLabel = await CheckExistingRecordLabel(albumSubmit.RecordLabelName);
 
-                var existingAlbum = await _albumRepos.GetAlbumsByArtistNameAndAlbumTitleAsync(artist.ArtistName, albumSubmit.Title);
+                var existingAlbum = await _albumRepos.GetAlbumsByArtistNameAlbumTitleLabelIdAsync(artist.ArtistName, albumSubmit.Title, recordLabel.RecordLabelName);
                 if (existingAlbum != null) {
                     return BadRequest("Album already exists.");
                 }
