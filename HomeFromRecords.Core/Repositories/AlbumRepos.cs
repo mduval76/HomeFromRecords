@@ -66,7 +66,7 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums.ToListAsync();
             }
             catch (Exception) {
-                throw new Exception("An error occured while retrieving all albums");
+                throw new Exception("An error occured while retrieving the first page's worth of albums");
             }
         }
 

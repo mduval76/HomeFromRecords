@@ -138,6 +138,25 @@
     background-color: rgb(128, 128, 128, 1.0);
 }
 
+.pagination .page-num {
+    cursor: pointer;
+    font-size: large;
+    margin-bottom: 2.5vh;
+}
+
+.pagination .page-num:hover {
+    color: blue;
+}
+
+.current-page {
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+.spinner {
+    display: inline-block;
+}
+
 hr {
     margin: 25px 0px;
     width: 77.5%;

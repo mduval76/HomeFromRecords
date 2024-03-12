@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ApiService } from '../../services/api/api.service';
@@ -29,7 +30,8 @@ interface EnumItem {
     MatCardModule,
     MatDialogModule,
     MatDividerModule,
-    MatGridListModule
+    MatGridListModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
@@ -44,6 +46,11 @@ export class DisplayComponent implements OnInit, OnDestroy {
   formattedArtistName: string = '';
   globalIndex: number = 0;
   imageClasses: Record<string, string> = {};
+  isLoading: boolean = false;
+  surroundingPages: number[] = [];
+  needsLeadingEllipse: boolean = false;
+  needsTrailingEllipse: boolean = false;
+
 
   alphaSortCriteria: string = 'ascending';
   mainSortCriteria: string = 'Artist';
@@ -100,6 +107,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
   fetchData(format: number) {
     let baseUrl = `${environment.apiUrl}Album/`;
     let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
+    this.isLoading = true;
 
     if (this.currentSearchQuery) {
       baseUrl += 'search';
@@ -128,7 +136,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         let sortedData = response.items;
         if (this.priceSortCriteria !== 'none') {
           sortedData = this.applyPriceSorting(response, this.priceSortCriteria);
-        } else {
+        } 
+        else {
           sortedData = this.sortData(response, this.mainSortCriteria, this.alphaSortCriteria === 'descending');
         }
 
@@ -147,10 +156,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
         });
 
         this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+        this.surroundingPages = this.pageService.calculateSurroundingPages(this.totalPages, this.currentPage);
         this.pageService.updateData(this.data);
+        this.isLoading = false; 
       },
       error: (error) => {
         console.error(error);
+        this.isLoading = false; 
       }
     });
   }
