@@ -8,10 +8,14 @@ export class PageService {
   private currentPage = new BehaviorSubject<number>(1);
   private itemsPerPage = new BehaviorSubject<number>(12);
   private currentData = new BehaviorSubject<any[]>([]);
+  private leadingEllipse = new BehaviorSubject<boolean>(false);
+  private trailingEllipse = new BehaviorSubject<boolean>(false);
 
   currentPage$ = this.currentPage.asObservable();
   itemsPerPage$ = this.itemsPerPage.asObservable();
   currentData$ = this.currentData.asObservable();
+  leadingEllipse$ = this.leadingEllipse.asObservable();
+  trailingEllipse$ = this.trailingEllipse.asObservable();
 
   constructor() { }
 
@@ -25,17 +29,31 @@ export class PageService {
 
   calculateSurroundingPages(totalPages: number, currentPage: number): number[] {
     const surroundingPages = [];
-    if (totalPages <= 7) {
+    if (totalPages <= 9) {
       for (let i = 1; i <= totalPages; i++) {
         surroundingPages.push(i);
       }
     } else {
       if (currentPage <= 4) {
-        surroundingPages.push(1, 2, 3, 4, 5, 6, 7, 8, totalPages);
+        for (let i = 1; i <= 8; i++) {
+          surroundingPages.push(i);
+        }
+        surroundingPages.push(totalPages);
+        this.trailingEllipse.next(true);
       } else if (currentPage >= totalPages - 3) {
-        surroundingPages.push(1, totalPages - 7, totalPages - 6, totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        surroundingPages.push(1);
+        for (let i = totalPages - 7; i <= totalPages; i++) {
+          surroundingPages.push(i);
+        }
+        this.leadingEllipse.next(true);
       } else {
-        surroundingPages.push(1, currentPage - 3, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, currentPage + 3, totalPages);
+        surroundingPages.push(1);
+        for (let i = currentPage - 3; i <= currentPage + 3; i++) {
+          surroundingPages.push(i);
+        }
+        surroundingPages.push(totalPages);
+        this.leadingEllipse.next(true);
+        this.trailingEllipse.next(true);
       }
     }
     return surroundingPages;

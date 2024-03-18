@@ -40,7 +40,9 @@
             <button class="previous-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
                 <i class="fa-solid fa-caret-left"></i>
             </button>
-            <span class="page-num" *ngFor="let page of surroundingPages"><a  [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a></span>
+            <span class="page-num" *ngFor="let page of surroundingPages">
+                <a [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a>
+            </span>
             <button class="next-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
                 <i class="fa-solid fa-caret-right"></i>
             </button>
