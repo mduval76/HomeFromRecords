@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -24,14 +25,16 @@ interface DecodedToken {
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss'
 })
 export class AccountComponent implements OnInit{
-  isLogin = true;
-  isAdminLogin = false;
+  isLoading: boolean = false;
+  isLogin: boolean = true;
+  isAdminLogin: boolean = false;
   userId: string = '';
   form!: FormGroup;
 
@@ -48,8 +51,10 @@ export class AccountComponent implements OnInit{
 
   onSubmit(): void {
     if (this.form.valid) {
+      this.isLoading = true;
+
       if (!this.isLogin && !this.pwdMatch()) {
-        this.sb.open('Passwords do not match', 'Close', { duration: 5000 });
+        this.sb.open('Passwords do not match', 'Close', { duration: 3000 });
         return;
       }
   
@@ -84,7 +89,7 @@ export class AccountComponent implements OnInit{
             if (response.isInitialAdmin) {
               this.isAdminLogin = true;
               this.userId = response.userId;
-              this.sb.open('Initial Admin Login Detected', 'Close', { duration: 5000 });
+              this.sb.open('Initial Admin Login Detected', 'Close', { duration: 3000 });
               this.switchForm();
             } else {
               if (userRole === 'Admin') {
@@ -92,27 +97,30 @@ export class AccountComponent implements OnInit{
               } else {
                 this.router.navigate(['/catalog']);
               }
-              this.sb.open('Login successful', 'Close', { duration: 5000 });
+              this.sb.open('Login successful', 'Close', { duration: 3000 });
               this.isAdminLogin = false;
             }
           } else if (this.isAdminLogin) { 
             this.isAdminLogin = false;
-            this.sb.open('Update successful', 'Close', { duration: 5000 });
+            this.sb.open('Update successful', 'Close', { duration: 3000 });
             this.switchForm();
           } else { 
-            this.sb.open('Registration successful', 'Close', { duration: 5000 });
+            this.sb.open('Registration successful', 'Close', { duration: 3000 });
             this.switchForm();
           }
+
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error:', error);
           let errorMessage = this.isLogin ? 'Login failed: ' : this.isAdminLogin ? 'Update failed: ' : 'Registration failed: ';
           errorMessage += error.error?.message || error.message;
-          this.sb.open(errorMessage, 'Close', { duration: 5000 });
+          this.sb.open(errorMessage, 'Close', { duration: 3000 });
+          this.isLoading = false;
         }
       });
     } else {
-      this.sb.open('Form is not valid', 'Close', { duration: 5000 });
+      this.sb.open('Form is not valid', 'Close', { duration: 3000 });
     }
   }
 
@@ -155,12 +163,12 @@ export class AccountComponent implements OnInit{
   logout(): void {
     this.authService.logoutUser().subscribe({
       next: () => {
-        this.sb.open('Logout successful', 'Close', { duration: 5000 });
+        this.sb.open('Logout successful', 'Close', { duration: 3000 });
         this.authService.clearUserRole();
         this.router.navigate(['/account']);
       },
       error: () => {
-        this.sb.open('Logout failed', 'Close', { duration: 5000 });
+        this.sb.open('No user to log out', 'Close', { duration: 3000 });
       }
     });
   }

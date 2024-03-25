@@ -97,10 +97,11 @@
             <p>{{ isLogin ? 'Not a member yet? Want some crazy shit in your inbox?' : 'Already a member? Ready for some crate-digging?' }}<br>Use the
                 <a (click)="switchForm()" class="switch-form-link">{{ isLogin ? 'REGISTER' : 'LOGIN' }}</a> form instead.
             </p>
-            <div class="button-container">
+            <div class="button-container" *ngIf="!isLoading">
                 <button mat-raised class="submit-btn" (click)="onSubmit()">{{ isLogin ? 'Login' : this.isAdminLogin ? 'Update' : 'Register' }}</button>
                 <button *ngIf="!isLogin" mat-raised class="clear-btn" (click)="clearForm()">Clear</button>
             </div>
+            <mat-spinner *ngIf="isLoading" class="spinner" diameter="50"></mat-spinner>
         </div>
     </div>
 </mat-card>

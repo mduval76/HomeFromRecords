@@ -25,7 +25,9 @@
                 </tr>
                 <tr>
                     <td class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Title')"></i></td>
-                    <td *ngIf="!activeFields['Title']"><h2>{{data.selectedItem.title}}</h2></td>
+                    <td *ngIf="!activeFields['Title']">
+                        <h2 class="album-title">{{data.selectedItem.title}}</h2>
+                    </td>
                     <td *ngIf="activeFields['Title']" [ngClass]="{'value-cell-updating': activeFields}">
                         <mat-form-field appearance="outline" class="title-cell">
                             <mat-label>Title</mat-label>
