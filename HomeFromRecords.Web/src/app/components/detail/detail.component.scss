@@ -20,15 +20,19 @@
 .album-details-container {
     display: flex;
     flex-direction: column;
-    height: 84%;
-    justify-content: space-between;
+    height: 33vw;
+    justify-content: space-around;
     margin: 4% 1% 0% 0%;
     position: relative;
     width: 100%
 }
 
-.album-title {
+.album-label {
     font-size: 1vw;
+}
+
+.album-title {
+    font-size: 1.25vw;
 
 }
 
@@ -40,12 +44,16 @@
     background-color: rgb(190, 227, 252);
     border-bottom: 1px solid black;
     border-radius: 0px 25px 0px 0px;
-    flex-shrink: 0; 
-    padding: 20px 0px 10px 0px;
+    flex-shrink: 0;
+    padding: 1vw;
     position: absolute;
     top: 0px;
     width: 100%;
     z-index: 2;
+}
+
+.header-table-container table * {
+    padding: 0.15vw 0vw;
 }
 
 .searchable-artist a {
@@ -66,13 +74,13 @@
     border-top: 1px solid black;
     bottom: 0px;
     display: flex;
-    padding: 20px;
+    padding: 1.25vw;
     position: absolute;
     width: 100%;
 }
 
 .footer-price {
-    width: 50%;
+    width: 30%;
 }
 
 .footer-cart {
@@ -86,7 +94,7 @@
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-left: 25px;
+    margin-left: 1vw;
     padding: 14px 13px 12px 12px ;
 }
 
@@ -110,12 +118,12 @@
 .detail-table-container {
     bottom: 0;
     flex-grow: 1;
-    margin-bottom: 10vh;
+    margin-bottom: 3.5vw;
     margin-top: 2%;
     max-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 0% 2% 5% 2%;
+    padding: 0vw 1vw 3.5vw 1vw;
     position: absolute;
     top: 0;
 }

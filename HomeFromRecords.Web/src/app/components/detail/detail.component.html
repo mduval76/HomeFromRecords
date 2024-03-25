@@ -38,7 +38,7 @@
                 <tr>
                     <td class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('RecordLabelName')"></i></td>
                     <td *ngIf="!activeFields['RecordLabelName']">
-                        <h3>{{data.selectedItem.recordLabelName}}</h3>
+                        <h3 class="album-label">{{data.selectedItem.recordLabelName}}</h3>
                     </td>
                     <td *ngIf="activeFields['RecordLabelName']" [ngClass]="{'value-cell-updating': activeFields}">
                         <mat-form-field appearance="outline" class="record-label-cell">
