@@ -37,17 +37,24 @@ h1 {
     font-size: large;
 }
 
-@media (max-width: 650px) {
-  h1 {
-    font-size: 10vw !important;
-  }
-}
-
 @media (max-width: 950px) {
   .border-dialog {
     display: block;
     height: 80vw;
-    overflow: hidden !important;
     width: 80vw;
+  }
+}
+
+
+
+@media (max-width: 650px) {
+  .border-dialog {
+    display: block;
+    height: 150vw;
+    width: 90vw;
+  }
+  
+  h1 {
+    font-size: 10vw !important;
   }
 }

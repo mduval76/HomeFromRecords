@@ -7,6 +7,12 @@
     width: 100%
 }
 
+.album-img-details-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
 .album-cover-container {
     margin: 4% 2% 4% 1%;
 }
@@ -357,17 +363,38 @@ hr {
 }
 
 @media (max-width: 950px) {
+    .main-container {
+        overflow: visible;
+    }
+
+    .album-img-details-container {
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+    }
+
     .album-cover-container {
-        margin: 4% 2% 4% 1%;
+        margin: 8% 2% 18% 1%;
+        width: 100%;
     }
     
     .album-cover-container img {
         border: 1px solid black;
-        height: 90%;
-        width: auto;
+        height: auto;
+        width: 97.5%;
     }
 
     .album-details-container {
         flex-direction: column;
+    }
+
+    .fa-caret-left, .fa-caret-right {
+        font-size: 4rem;
+    }
+}
+
+@media (max-width: 650px) {
+    .fa-caret-left, .fa-caret-right {
+        font-size: 2.5rem;
     }
 }
