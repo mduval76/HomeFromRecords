@@ -36,7 +36,7 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
-        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName) {
+        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat) {
             try {
                 var artist = await _context.Artists
                     .Where(a => a.ArtistName.ToLower() == artistName.ToLower())
@@ -48,7 +48,7 @@ namespace HomeFromRecords.Core.Repositories {
 
                 if (artist != null) {
                     var album = await _context.Albums
-                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label.RecordLabelId)
+                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label!.RecordLabelId && a.Format == mainFormat)
                         .FirstOrDefaultAsync();
 
                     return album;
@@ -57,7 +57,7 @@ namespace HomeFromRecords.Core.Repositories {
                 return null;
             }
             catch (Exception ex) {
-                throw new Exception("An error occurred while retrieving the album by artist name and title", ex);
+                throw new Exception("An error occurred while checking for doubles", ex);
             }
         }
 
