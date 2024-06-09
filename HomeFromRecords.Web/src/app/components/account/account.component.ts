@@ -1,4 +1,4 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -50,6 +50,7 @@ export class AccountComponent implements OnInit{
   }
 
   onSubmit(): void {
+    console.log('onSubmit reached');
     if (this.form.valid) {
       this.isLoading = true;
 
@@ -172,6 +173,11 @@ export class AccountComponent implements OnInit{
       }
     });
   }
+
+  onKeypressEvent(event: any){
+    console.log(event.target.value);
+ 
+ }
 
   private capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
