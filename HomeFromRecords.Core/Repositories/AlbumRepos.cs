@@ -36,7 +36,7 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
-        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat) {
+        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country) {
             try {
                 var artist = await _context.Artists
                     .Where(a => a.ArtistName.ToLower() == artistName.ToLower())
@@ -48,7 +48,7 @@ namespace HomeFromRecords.Core.Repositories {
 
                 if (artist != null) {
                     var album = await _context.Albums
-                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label!.RecordLabelId && a.Format == mainFormat)
+                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label!.RecordLabelId && a.Format == mainFormat && a.Country == country)
                         .FirstOrDefaultAsync();
 
                     return album;
