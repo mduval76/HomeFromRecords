@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -31,7 +31,8 @@ interface EnumItem {
     MatDialogModule,
     MatDividerModule,
     MatGridListModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    NgOptimizedImage
   ],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
