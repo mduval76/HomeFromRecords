@@ -26,7 +26,7 @@
 .album-details-container {
     display: flex;
     flex-direction: column;
-    height: 33vw;
+    height: 33.5vw;
     justify-content: space-around;
     margin: 4% 1% 0% 0%;
     position: relative;
@@ -50,7 +50,7 @@
     border-bottom: 1px solid black;
     border-radius: 0px 25px 0px 0px;
     flex-shrink: 0;
-    padding: 1vw;
+    padding: 1vw 0vw;
     position: absolute;
     top: 0px;
     width: 100%;

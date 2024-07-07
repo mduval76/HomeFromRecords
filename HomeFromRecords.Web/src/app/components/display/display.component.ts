@@ -75,10 +75,12 @@ export class DisplayComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
+    this.isLoading = true;
+    this.fetchData(this.format);
     this.setupSubscriptions();
     this.setupBreakpointObserver();
     this.fetchEnums();
-    this.fetchData(this.format);
+    this.isLoading = false;
   }
 
   ngOnDestroy() {
@@ -108,7 +110,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
   fetchData(format: number) {
     let baseUrl = `${environment.apiUrl}Album/`;
     let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
-    this.isLoading = true;
 
     if (this.currentSearchQuery) {
       baseUrl += 'search';
@@ -159,11 +160,9 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
         this.surroundingPages = this.pageService.calculateSurroundingPages(this.totalPages, this.currentPage);
         this.pageService.updateData(this.data);
-        this.isLoading = false; 
       },
       error: (error) => {
         console.error(error);
-        this.isLoading = false; 
       }
     });
   }
@@ -323,36 +322,43 @@ export class DisplayComponent implements OnInit, OnDestroy {
     const formatSubscription = this.sharedService.getFormatSortCriteria().subscribe(format => {
       this.format = format;
       this.currentPage = 1;
+      if (this.isLoading) return;
       this.fetchData(this.format);
     });
 
     const searchQuerySubscription = this.sharedService.getSearchQuery().subscribe(query => {
       this.currentSearchQuery = query;
       this.currentPage = 1;
+      if (this.isLoading) return;
       this.fetchData(this.format);
     });
 
     const mainSortSubscription = this.sharedService.getMainSortCriteria().subscribe(criteria => {
       this.mainSortCriteria = criteria;
+      if (this.isLoading) return;
       this.fetchData(this.format);
     });
 
     const alphaSortSubscription = this.sharedService.getAlphaSortCriteria().subscribe(criteria => {
       this.alphaSortCriteria = criteria;
+      if (this.isLoading) return;
       this.fetchData(this.format);
     });
 
     const priceSortSubscription = this.sharedService.getPriceSortCriteria().subscribe(criteria => {
       this.priceSortCriteria = criteria;
+      if (this.isLoading) return;
       this.fetchData(this.format);
     });
 
     const pageServiceSubscription = this.pageService.currentPage$.subscribe(page => {
       if (this.currentPage !== page) {
         this.currentPage = page;
+        if (this.isLoading) return;
         this.fetchData(this.format);
       }
     });
+
 
     const refreshNeededSubscription = this.sharedService.getRefreshNeeded().subscribe(needed => {
       if (needed) {

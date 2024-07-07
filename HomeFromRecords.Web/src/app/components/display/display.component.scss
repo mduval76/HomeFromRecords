@@ -116,10 +116,6 @@
     margin: auto;
 }
 
-.pagination-container span {
-    margin: 25px;
-}
-
 .pagination-container button {
     background-color: grey;
     border: none;
@@ -127,7 +123,7 @@
     color: white;
     cursor: pointer;
     font-size: x-large;
-    margin-bottom: 2.5vh;
+    margin: 2.5vh;
     padding: 15px;
 }
 
@@ -142,7 +138,7 @@
 .pagination .page-num {
     cursor: pointer;
     font-size: large;
-    margin-bottom: 2.5vh;
+    margin: 2.5vh;
 }
 
 .pagination .page-num:hover {
@@ -160,8 +156,7 @@
 }
 
 hr {
-    margin: 25px 0px;
-    width: 77.5%;
+    width: 80%;
 }
 
 mat-card-actions {

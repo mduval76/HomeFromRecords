@@ -3,6 +3,23 @@
         <h1 *ngIf="this.currentSearchQuery">Results for {{this.currentSearchQuery}}</h1>
         <h1 *ngIf="!this.currentSearchQuery">Catalog</h1>
     </div>
+    <div class="pagination-container">
+        <hr>
+        <div class="pagination" *ngIf="!isLoading">
+            <button class="previous-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+                <i class="fa-solid fa-caret-left"></i>
+            </button>
+            <span class="page-num" *ngFor="let page of surroundingPages">
+                <span class="page-ellipse" *ngIf="page === totalPages && totalPages > 5" style="margin-right: 2.75vh">...</span>
+                <a [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a>
+                <span class="page-ellipse" *ngIf="page === 1 && totalPages > 5" style="margin-left: 2.75vh">...</span>
+            </span>
+            <button class="next-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+                <i class="fa-solid fa-caret-right"></i>
+            </button>
+        </div>
+        <mat-spinner *ngIf="isLoading" class="spinner" diameter="35"></mat-spinner>
+    </div>
     <div class="grid-detail-container">
         <div class="grid">
             <mat-grid-list [cols]="cols" rowHeight="1:1.75" gutterSize="25">
@@ -35,18 +52,19 @@
         </div>
     </div>
     <div class="pagination-container">
-        <hr>
         <div class="pagination" *ngIf="!isLoading">
             <button class="previous-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
                 <i class="fa-solid fa-caret-left"></i>
             </button>
             <span class="page-num" *ngFor="let page of surroundingPages">
+                <span class="page-ellipse" *ngIf="page === totalPages && totalPages > 5" style="margin-right: 2.75vh">...</span>
                 <a [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a>
+                <span class="page-ellipse" *ngIf="page === 1 && totalPages > 5" style="margin-left: 2.75vh">...</span>
             </span>
             <button class="next-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
                 <i class="fa-solid fa-caret-right"></i>
             </button>
         </div>
-        <mat-spinner *ngIf="isLoading" class="spinner" diameter="30"></mat-spinner>
+        <mat-spinner *ngIf="isLoading" class="spinner" diameter="35"></mat-spinner>
     </div>
 </div>
