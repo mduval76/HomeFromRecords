@@ -46,8 +46,9 @@
 
 .wide-format {
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
     padding-bottom: 10%;
+    margin-bottom: 39px !important;
 }
 
 .tall-format {

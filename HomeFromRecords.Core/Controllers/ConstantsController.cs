@@ -44,6 +44,7 @@ namespace HomeFromRecords.Core.Controllers {
                 { "CD", "CD" },
                 { "CD_R", "CD-R" },
                 { "DVD", "DVD" },
+                { "DVD_R", "DVD-R" },
                 { "BLURAY", "Blu-ray" },
                 { "EIGHT_TRACK", "8-track" },
                 { "PICTURE_DISC", "Picture-Disc"},

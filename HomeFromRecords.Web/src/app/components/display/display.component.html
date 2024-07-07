@@ -8,7 +8,7 @@
             <mat-grid-list [cols]="cols" rowHeight="1:1.75" gutterSize="25">
                 <mat-grid-tile *ngFor="let item of data; let i = index">
                     <mat-card class="item-card">
-                        <img mat-card-image [ngSrc]="item.imgFileExt" width="500" height="500" priority [ngClass]="imageClasses[item.imgFileExt]" (error)="handleImageError($event, defaultImg)" (click)="openDialog(item, i)" alt="Album cover">
+                        <img [ngSrc]="item.imgFileExt" width="450" height="450" [ngClass]="imageClasses[item.imgFileExt]" priority (error)="handleImageError($event, defaultImg)" (click)="openDialog(item, i)" alt="Album cover">
                         <mat-card-header>
                             <div mat-card-avatar class="type-icon" [style.background-image]="getIconUrl(item.format)"></div>
                             <mat-card-title>
