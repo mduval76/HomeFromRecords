@@ -4,7 +4,7 @@
     </div>
     <div class="content-container" [formGroup]="form">
         <div class="image-container">
-            <img src="{{data.selectedItem.imgFileExt}}" [ngClass]="data.imageClass" alt="Album cover">
+            <img src="{{data.selectedItem.imgFileExt}}" [ngClass]="data.imageClass" priority  alt="Album cover">
         </div>
         <!-- HEADER -------------------------------------------------------------------------------------->
         <div class="header-container">
@@ -65,6 +65,7 @@
                 <div class="label-cell">Format:</div>
                 <div class="update-value-container">
                     <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Format')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
                     <div class="value-cell" *ngIf="!activeFields['Format']">
                         <div class="inner-value-cell">
                             <span class="inner-label">Main:</span>
@@ -83,6 +84,7 @@
                 </div>
                 <div class="update-value-container">
                     <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('SubFormat')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
                     <div class="value-cell" *ngIf="!activeFields['SubFormat']">
                         <div class="inner-value-cell">
                             <span class="inner-label">Sub:</span>
@@ -104,7 +106,8 @@
                 <div class="label-cell">Speed:</div>
                 <div class="update-value-container">
                     <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('VinylSpeed')"></i></div>
-                    <div class="value-cell" *ngIf="!activeFields['VinylSpeed']">{{ data.selectedItem.vinylSpeed }}</div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['VinylSpeed']">{{ data.selectedItem.vinylSpeed }}</div>
                     <div class="value-cell" *ngIf="activeFields['VinylSpeed']" [ngClass]="{'value-cell-updating': activeFields}">
                         <mat-form-field appearance="outline" class="speed-cell">
                             <mat-label>Speed</mat-label>
@@ -117,216 +120,239 @@
             </div>
             <div class="type-length-row">
                 <div class="label-cell">Album:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumType')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['AlbumType']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Type:</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.albumType }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumType')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['AlbumType']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Type:</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.albumType }}</span>
+                        </div>
+                    </div>
+                    <div class="value-cell" *ngIf="activeFields['AlbumType']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="type-cell">
+                            <mat-label>Type</mat-label>
+                            <mat-select formControlName="AlbumType">
+                                <mat-option *ngFor="let albumType of enums.albumTypes" [value]="albumType.value">{{ albumType.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="value-cell" *ngIf="activeFields['AlbumType']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="type-cell">
-                        <mat-label>Type</mat-label>
-                        <mat-select formControlName="AlbumType">
-                            <mat-option *ngFor="let albumType of enums.albumTypes" [value]="albumType.value">{{ albumType.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumLength')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['AlbumLength']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Length:</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.albumLength }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumLength')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['AlbumLength']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Length:</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.albumLength }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="value-cell" *ngIf="activeFields['AlbumLength']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="length-cell">
-                        <mat-label>Length</mat-label>
-                        <mat-select formControlName="AlbumLength">
-                            <mat-option *ngFor="let length of enums.albumLengths" [value]="length.value">{{ length.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <div class="value-cell" *ngIf="activeFields['AlbumLength']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="length-cell">
+                            <mat-label>Length</mat-label>
+                            <mat-select formControlName="AlbumLength">
+                                <mat-option *ngFor="let length of enums.albumLengths" [value]="length.value">{{ length.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="catalog-row">
                 <div class="label-cell">Cat#:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('CatalogNumber')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['CatalogNumber']">{{ data.selectedItem.catalogNumber }}</div>
-                <div class="value-cell" *ngIf="activeFields['CatalogNumber']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="catalog-cell">
-                        <mat-label>Cat#</mat-label>
-                        <input matInput type="text" formControlName="CatalogNumber">
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('CatalogNumber')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['CatalogNumber']">{{ data.selectedItem.catalogNumber }}</div>
+                    <div class="value-cell" *ngIf="activeFields['CatalogNumber']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="catalog-cell">
+                            <mat-label>Cat#</mat-label>
+                            <input matInput type="text" formControlName="CatalogNumber">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="grade-row">
                 <div class="label-cell">Grade:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('MediaGrade')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['MediaGrade']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Media:</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.mediaGrade }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('MediaGrade')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['MediaGrade']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Media:</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.mediaGrade }}</span>
+                        </div>
+                    </div>
+                    <div class="value-cell" *ngIf="activeFields['MediaGrade']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="media-grade-cell">
+                            <mat-label>Media</mat-label>
+                            <mat-select formControlName="MediaGrade">
+                                <mat-option *ngFor="let grade of enums.grades" [value]="grade.value">{{ grade.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="value-cell" *ngIf="activeFields['MediaGrade']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="media-grade-cell">
-                        <mat-label>Media</mat-label>
-                        <mat-select formControlName="MediaGrade">
-                            <mat-option *ngFor="let grade of enums.grades" [value]="grade.value">{{ grade.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('SleeveGrade')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['SleeveGrade']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Sleeve:</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.sleeveGrade }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('SleeveGrade')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['SleeveGrade']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Sleeve:</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.sleeveGrade }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="value-cell" *ngIf="activeFields['SleeveGrade']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="sleeve-grade-cell">
-                        <mat-label>Sleeve</mat-label>
-                        <mat-select formControlName="SleeveGrade">
-                            <mat-option *ngFor="let grade of enums.grades" [value]="grade.value">{{ grade.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <div class="value-cell" *ngIf="activeFields['SleeveGrade']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="sleeve-grade-cell">
+                            <mat-label>Sleeve</mat-label>
+                            <mat-select formControlName="SleeveGrade">
+                                <mat-option *ngFor="let grade of enums.grades" [value]="grade.value">{{ grade.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="price-row">
                 <div class="label-cell">Price:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Price')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['Price']">{{ data.selectedItem.price }}$</div>
-                <div class="value-cell" *ngIf="activeFields['Price']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="price-cell">
-                        <mat-label>Price</mat-label>
-                        <input matInput type="number" formControlName="Price">
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Price')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['Price']">{{ data.selectedItem.price }}$</div>
+                    <div class="value-cell" *ngIf="activeFields['Price']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="price-cell">
+                            <mat-label>Price</mat-label>
+                            <input matInput type="number" formControlName="Price">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="quantity-row">
                 <div class="label-cell">Quantity:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Quantity')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['Quantity']">{{ data.selectedItem.quantity }}</div>
-                <div class="value-cell" *ngIf="activeFields['Quantity']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="quantity-cell">
-                        <mat-label>Quantity</mat-label>
-                        <input matInput type="number" formControlName="Quantity">
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Quantity')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['Quantity']">{{ data.selectedItem.quantity }}</div>
+                    <div class="value-cell" *ngIf="activeFields['Quantity']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="quantity-cell">
+                            <mat-label>Quantity</mat-label>
+                            <input matInput type="number" formControlName="Quantity">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="country-row">
                 <div class="label-cell">Country:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Country')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['Country']">{{ data.selectedItem.country }}</div>
-                <div class="value-cell" *ngIf="activeFields['Country']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="country-cell">
-                        <mat-label>Country</mat-label>
-                        <input matInput type="text" formControlName="Country">
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Country')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['Country']">{{ data.selectedItem.country }}</div>
+                    <div class="value-cell" *ngIf="activeFields['Country']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="country-cell">
+                            <mat-label>Country</mat-label>
+                            <input matInput type="text" formControlName="Country">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="year-row">
                 <div class="label-cell">Year:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('ReleaseYear')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['ReleaseYear']">{{ data.selectedItem.releaseYear }}</div>
-                <div class="value-cell" *ngIf="activeFields['ReleaseYear']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="year-cell">
-                        <mat-label>Year</mat-label>
-                        <input matInput type="text" formControlName="ReleaseYear">
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"> <i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('ReleaseYear')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['ReleaseYear']">{{ data.selectedItem.releaseYear }}</div>
+                    <div class="value-cell" *ngIf="activeFields['ReleaseYear']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="year-cell">
+                            <mat-label>Year</mat-label>
+                            <input matInput type="text" formControlName="ReleaseYear">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="package-row">
                 <div class="label-cell">Package:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('PackageType')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['PackageType']">{{ data.selectedItem.packageType }}</div>
-                <div class="value-cell" *ngIf="activeFields['PackageType']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="package-cell">
-                        <mat-label>Package</mat-label>
-                        <mat-select formControlName="PackageType">
-                            <mat-option *ngFor="let package of enums.packageTypes" [value]="package.value">{{ package.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('PackageType')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell inner-value-cell" *ngIf="!activeFields['PackageType']">{{ data.selectedItem.packageType }}</div>
+                    <div class="value-cell" *ngIf="activeFields['PackageType']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="package-cell">
+                            <mat-label>Package</mat-label>
+                            <mat-select formControlName="PackageType">
+                                <mat-option *ngFor="let package of enums.packageTypes" [value]="package.value">{{ package.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="genre-row">
                 <div class="label-cell">Genre:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('ArtistGenre')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['ArtistGenre']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Main :</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.artistGenre }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('ArtistGenre')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['ArtistGenre']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Main :</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.artistGenre }}</span>
+                        </div>
+                    </div>
+                    <div class="value-cell" *ngIf="activeFields['ArtistGenre']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="genre-cell">
+                            <mat-label>Main</mat-label>
+                            <mat-select formControlName="ArtistGenre">
+                                <mat-option *ngFor="let genre of enums.artistGenres" [value]="genre.value">{{ genre.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="value-cell" *ngIf="activeFields['ArtistGenre']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="genre-cell">
-                        <mat-label>Main</mat-label>
-                        <mat-select formControlName="ArtistGenre">
-                            <mat-option *ngFor="let genre of enums.artistGenres" [value]="genre.value">{{ genre.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumGenre')"></i></div>
-                <div class="value-cell" *ngIf="!activeFields['AlbumGenre']">
-                    <div class="inner-value-cell">
-                        <span class="inner-label">Secondary:</span>
-                        <br><hr>
-                        <span class="inner-value">{{ data.selectedItem.albumGenre }}</span>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('AlbumGenre')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
+                    <div class="value-cell" *ngIf="!activeFields['AlbumGenre']">
+                        <div class="inner-value-cell">
+                            <span class="inner-label">Secondary:</span>
+                            <br><hr>
+                            <span class="inner-value">{{ data.selectedItem.albumGenre }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="value-cell" *ngIf="activeFields['AlbumGenre']" [ngClass]="{'value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="subgenre-cell">
-                        <mat-label>Secondary</mat-label>
-                        <mat-select formControlName="AlbumGenre">
-                            <mat-option *ngFor="let subgenre of enums.albumGenres" [value]="subgenre.value">{{ subgenre.name }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <div class="value-cell" *ngIf="activeFields['AlbumGenre']" [ngClass]="{'value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="subgenre-cell">
+                            <mat-label>Secondary</mat-label>
+                            <mat-select formControlName="AlbumGenre">
+                                <mat-option *ngFor="let subgenre of enums.albumGenres" [value]="subgenre.value">{{ subgenre.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="details-row">
                 <div class="label-cell">Details:</div>
-                <div class="update-value-container"></div>
-                <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Details')"></i></div>
-                <div class="details-value-cell" *ngIf="!activeFields['Details']">
-                    <div class="details-list-container">
-                        <ul class="details-list">
-                            <ng-container *ngFor="let detail of formattedDetails">
-                                <li *ngIf="!formattedSubDetails.has(detail)">{{ detail }}</li>
-                                <li *ngIf="formattedSubDetails.has(detail)">
-                                    {{ detail }}
-                                    <ul class="sub-details-list">
-                                    <li *ngFor="let subDetail of formattedSubDetails.get(detail)">
-                                        {{ subDetail }}
+                <div class="update-value-container"><div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Details')"></i></div>
+                    <div class="details-value-cell" *ngIf="!activeFields['Details']">
+                        <div class="details-list-container">
+                            <ul class="details-list">
+                                <ng-container *ngFor="let detail of formattedDetails">
+                                    <li *ngIf="!formattedSubDetails.has(detail)">{{ detail }}</li>
+                                    <li *ngIf="formattedSubDetails.has(detail)">
+                                        {{ detail }}
+                                        <ul class="sub-details-list">
+                                        <li *ngFor="let subDetail of formattedSubDetails.get(detail)">
+                                            {{ subDetail }}
+                                        </li>
+                                        </ul>
                                     </li>
-                                    </ul>
-                                </li>
-                            </ng-container>
-                        </ul>
+                                </ng-container>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div *ngIf="activeFields['Details']" [ngClass]="{'details-value-cell-updating': activeFields}">
-                    <mat-form-field appearance="outline" class="details-cell">
-                        <mat-label>Details</mat-label>
-                        <textarea matInput formControlName="Details" rows="5"></textarea>
-                    </mat-form-field>
+                    <div *ngIf="activeFields['Details']" [ngClass]="{'details-value-cell-updating': activeFields}">
+                        <mat-form-field appearance="outline" class="details-cell">
+                            <mat-label>Details</mat-label>
+                            <textarea matInput formControlName="Details" rows="5"></textarea>
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
         </div>
