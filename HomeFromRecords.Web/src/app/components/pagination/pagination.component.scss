@@ -1,0 +1,93 @@
+
+.current-page {
+    font-size: 2.6vh !important;
+    font-weight: bolder;
+}
+
+.paginator {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 2vh 0;
+    width: 100%;
+
+    button {
+        background-color: grey;
+        border: none;
+        border-radius: 5vh;
+        color: white;
+        cursor: pointer;
+        font-size: 3vh !important;
+        height: 5vh;
+        width: 5vh;
+
+        :active {
+            background-color: rgb(64, 64, 64, 1.0);
+        }
+    }
+
+    button:active {
+        background-color: rgb(64, 64, 64, 1.0);
+    }
+
+    button:disabled {
+        background-color: rgb(128, 128, 128, 0.33);
+    }
+
+    button:hover {
+        background-color: rgb(128, 128, 128, 0.75);
+    }
+
+    .empty-space {
+        height: 5vh;
+        width: 5vh;
+    }
+
+    .page-num a {
+        cursor: pointer;
+        font-size: 2.5vh;
+        margin: 0vw 1.5vw;
+    }
+}
+
+@media (max-width: 949px) {
+    .current-page {
+        font-size: 2.25vw !important;
+    }
+
+    .paginator {
+        margin: 1.75vw 0;
+
+        button {
+            font-size: 2.6vw !important;
+            height: 4.25vw;
+            width: 4.25vw;
+        }
+
+        .page-num a {
+            font-size: 2.15vw;
+            margin: 0vw 1.5vw;
+        }
+    }
+}
+
+@media (max-width: 599px) {
+    .current-page {
+        font-size: 3vw !important;
+    }
+
+    .paginator {
+        margin: 3vw 0;
+
+        button {
+            font-size: 3vw !important;
+            height: 4.75vw;
+            width: 4.75vw;
+        }
+
+        .page-num a {
+            font-size: 3vw;
+            margin: 0vw 1.5vw;
+        }
+    }
+}

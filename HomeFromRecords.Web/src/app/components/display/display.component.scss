@@ -1,93 +1,16 @@
+// DISPLAY /////////////////////////////////////////////////////////////////////////////
 .display-container {
     height: 100%;
     width: 100%;
-}
-
-.title {
-    padding: 2.5%;
-    width: 100%;
-}
-
-.grid {
-    height: 100%;
-    margin: auto;
-    width: 80%;
-}
-
-.item-card {
-    border: none;
-    height: 100%;
-    width: 100%;
-}
-
-.item-card img {
-    margin-bottom: 25px;
-    transition: transform 0.3s ease;
-}
-
-.item-card img:hover {
-    cursor: pointer;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-}
-
-.image-wrapper {
-    padding-right: 25%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.square-format, .default-format {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
-
-.wide-format {
-    width: 100%;
-    object-fit: contain;
-    padding-bottom: 10%;
-    margin-bottom: 39px !important;
-}
-
-.tall-format {
-    height: 56.5%;
-    object-fit: contain;
-}
-
-.type-icon {
-    background-size: cover;
-}
-
-.detail-btn:hover, .cart-btn:hover {
-    cursor: pointer;
-}
-
-.detail-btn {
-    background-color: rgb(49, 157, 224);
-    border: none;
-    border-radius: 7.5px;
-    color: white;
-    font-size: 1em;
-    padding: 15px;
-}
-
-.detail-btn:hover {
-    background-color: rgb(49, 157, 224, 0.75);
-}
-
-.detail-btn:active {
-    background-color: rgba(14, 119, 184, 1.0);
+    
+    .title {
+        padding: 3vh;
+        width: 100%;
+    }
 }
 
 .cart-btn {
     background-color: rgb(66, 204, 66);
-    border: none;
-    border-radius: 7.5px;
-    color: white;
-    font-size: 1.25em;
-    margin-left: 15px;
 }
 
 .cart-btn:hover {
@@ -98,105 +21,163 @@
     background-color: rgb(7, 151, 7);
 }
 
+.info-btn:hover, .cart-btn:hover {
+    cursor: pointer;
+}
+
+.info-btn {
+    background-color: rgb(49, 157, 224);
+}
+
+.info-btn:hover {
+    background-color: rgb(49, 157, 224, 0.75);
+}
+
+.info-btn:active {
+    background-color: rgba(14, 119, 184, 1.0);
+}
+
 .x-btn {
     background-color: rgb(172, 18, 18);
-    border: none;
-    border-radius: 7.5px;
-    color: white;
-    font-size: 1.25em;
-    margin-left: 15px;
-    padding: 14px 17px 12px 17px ;
 }
 
-.pagination-container {
-    align-items: center;
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 100%;
+    justify-content: space-around;
+    margin: auto;
+    margin-bottom: 5vh;
+    width: 75%;
+}
+
+
+.flex-header {
+    background-color: rgb(212, 238, 255);
+    border-radius: 10px;
+    height: auto;
+    overflow-wrap: break-word;
+    padding: 1vw;
+    width: auto;
+}
+
+.flex-item {
+    border: none;
+    box-sizing: border-box;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
+    margin-bottom: 20px;
+    width: calc((100% / 3) - 55px);
+}
+
+.format-icon {
+    background-size: cover;
+    height: 2.5vw;
+    width: 2.5vw;
+}
+
+.image-container {
+    margin-bottom: 2vh;
+    padding-bottom: 100%;
+    position: relative;
+    width: 100%;
+}
+
+img {
+    height: 100%;
+    left: 0;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    transition: transform 0.3s ease;
+    width: 100%;
+}
+  
+img:hover {
+    cursor: pointer;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+  
+.pagination-container {
+    margin: auto;
+    width: 75%;
+}
+
+.recordLabelName a {
+    cursor: pointer;
+}
+
+.recordLabelName:hover {
+    color: rgb(82, 99, 252) !important;
+}
+
+.recordLabelName a:active {
+    color: rgb(17, 17, 141) !important;
+}
+
+.spinner-container {
+    display: flex;
     justify-content: center;
     margin: auto;
-}
-
-.pagination-container button {
-    background-color: grey;
-    border: none;
-    border-radius: 7.5px;
-    color: white;
-    cursor: pointer;
-    font-size: x-large;
-    margin: 2.5vh;
-    padding: 15px;
-}
-
-.pagination-container button:hover {
-    background-color: rgb(128, 128, 128, 0.75);
-}
-
-.pagination-container button:active {
-    background-color: rgb(128, 128, 128, 1.0);
-}
-
-.pagination .page-num {
-    cursor: pointer;
-    font-size: large;
-    margin: 2.5vh;
-}
-
-.pagination .page-num:hover {
-    color: blue;
-}
-
-.current-page {
-    font-weight: bolder;
-    font-size: x-large;
-}
-
-.spinner {
-    display: inline-block;
     margin-bottom: 25px;
+    padding: 1.5vw;
+    width: 75%;
 }
 
-hr {
-    width: 80%;
+.tall-format {
+    object-fit: contain;
+}
+
+
+.wide-format {
+    object-fit: contain;
+    object-position: top;
+    padding-bottom: 10%;
 }
 
 mat-card-actions {
     align-items: center;
-    display: flex;
-    flex-direction: row;
-}
 
-mat-card-actions button {
-    border-radius: 10px;
-    display: flex;
-    padding: 15px;
-}
-
-mat-card-actions span {
-    font-family: Centaur;
-    font-size: 2vw;
-    font-weight: bold;
+    button {
+        margin-left: 0.75vw;
+    }
 }
 
 mat-card-content {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    padding-top: 15px;
-}
+    margin-top: 0.5vw;
 
-mat-card-header {
-    background-color: rgb(212, 238, 255);
-    padding: 25px;
+    button {
+        border: none;
+        border-radius: 7.5px;
+        color: white;
+        font-size: 1.25vw;
+        justify-content: center;
+        padding: 1vw;
+    }
+
+    span {
+        font-family: Centaur;
+        font-size: 2vw;
+        font-weight: bold;
+    }
 }
 
 mat-card-title {
     font-family: Centaur;
-    font-size: 3vh;
+    font-size: 1.75vw;
     font-weight: bold;
-}
+    word-wrap: break-word;
 
-mat-card-title a {
-    cursor: pointer;
+    a {
+        cursor: pointer;
+    }
 }
 
 mat-card-title a:hover {
@@ -209,20 +190,44 @@ mat-card-title a:active {
 
 mat-card-subtitle {
     font-size: 1vw;
+    font-style: italic;
+    padding-top: 5px !important;
+
+    a {
+        cursor: pointer;
+        font-size: 1.25vw;
+    }
 }
 
 @media (max-width: 950px) {
-    .grid, .pagination-container {
-    margin-left: 1.5vw;
-    width: 90%;
+    .flex-header {
+        padding: 1.5vw;
     }
 
-    mat-card-actions span {
-        font-size: 3.25vw;
+    .flex-item {
+        width: calc((100% / 2) - 50px);
+    }
+    
+    .format-icon {
+        height: 4vw;
+        width: 4vw;
     }
 
-    mat-card-header {
-        padding: 15px;
+    .pagination-container {
+        justify-content: space-around;
+    }
+
+    mat-card-actions button {
+        margin-left: 1.5vw;
+    }
+
+    mat-card-content button {
+        font-size: 2vw;
+        padding: 1.75vw;
+    }
+
+    mat-card-content span {
+        font-size: 3.5vw;
     }
 
     mat-card-title {
@@ -231,48 +236,59 @@ mat-card-subtitle {
 
     mat-card-subtitle {
         font-size: 1.5vw;
+        font-style: italic;
+        padding-top: 5px !important;
+    
+        a {
+            cursor: pointer;
+            font-size: 1.75vw;
+        }
     }
 }
 
-@media (max-width: 650px) {
-    .grid, .pagination-container {
-        margin-left: 0vw;
-        width: 90%;
+@media (max-width: 599px) {
+    .flex-header {
+        padding: 2.5vw;
     }
 
-    .title {
-        padding: 5% 20%;
+    .flex-item {
+        width: calc(100%);
     }
 
-    .type-icon {
-        display: none;
+    .format-icon {
+        height: 7.5vw;
+        width: 7.5vw;
     }
 
-    .detail-btn {
-        padding: 10px;
-    }
-
-    .cart-btn {
-        font-size: 0.75em;
-    }
-
-    .pagination-container button {
-        padding: 10px;
-    }
-
-    .pagination-container span {
-        margin: 10px;
+    mat-card-actions button {
+        margin-left: 2.25vw;
     }
 
     mat-card-actions span {
-        font-size: 5.5vw;
+        font-size: 6vw;
+    }
+
+    mat-card-content button {
+        font-size: 3.25vw;
+        padding: 2.75vw;
     }
 
     mat-card-title {
-        font-size: 6vw;
+        font-size: 5vw;
     }
 
     mat-card-subtitle {
         font-size: 3vw;
+    }
+
+    mat-card-subtitle {
+        font-size: 2.75vw;
+        font-style: italic;
+        padding-top: 5px !important;
+    
+        a {
+            cursor: pointer;
+            font-size: 3vw;
+        }
     }
 }

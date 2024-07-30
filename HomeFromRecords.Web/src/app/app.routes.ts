@@ -8,10 +8,10 @@ import { AccountComponent } from './components/account/account.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'home', component: HomeComponent },
-    { path: 'catalog', component: DisplayComponent },
-    { path: 'cart', component: CartComponent },
+    { path: 'about', component: AboutComponent },
     { path: 'account', component: AccountComponent },
-    { path: 'new-item-form', component: NewItemFormComponent },
-    { path: 'about', component: AboutComponent }
+    { path: 'cart', component: CartComponent },
+    { path: 'catalog', component: DisplayComponent },
+    { path: 'home', component: HomeComponent },
+    { path: 'new-item-form', component: NewItemFormComponent }
 ];

@@ -1,6 +1,6 @@
 <mat-card class="login-form-container">
     <div class="title">
-        <h1>{{ isLogin ? 'Login - You know you wanna!' : this.isAdminLogin ? 'Update' : 'Register - Fuck yeah!' }}</h1>
+        <h1>{{ isLogin ? 'Login' : this.isAdminLogin ? 'Update' : 'Register' }}</h1>
     </div>
     <div class="login-fields-container" [formGroup]="form">
         <mat-form-field *ngIf="!isLogin" class="username-field">

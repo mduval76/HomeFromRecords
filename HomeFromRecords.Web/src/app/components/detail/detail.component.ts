@@ -31,16 +31,16 @@ import { environment } from '../../../environments/environment.development';
   styleUrl: './detail.component.scss'
 })
 export class DetailComponent implements OnInit, OnDestroy {
+  activeFields: { [key: string]: boolean } = {};
   enums: any = {};
   formattedArtistName: string = '';
   formattedDetails: string[] = [];
   formattedSubDetails: Map<string, string[]> = new Map();
+  imageClass: string = 'square-format';
   includesSubstringFormatting: boolean = false;
   isAdmin: boolean = false;
   nameLength: number = 0;
-
   originalValues: { [key: string]: any } = {};
-  activeFields: { [key: string]: boolean } = {};
 
   form: FormGroup = new FormGroup({
     ArtistName: new FormControl(''),
@@ -74,17 +74,18 @@ export class DetailComponent implements OnInit, OnDestroy {
   private currentHeaderHeight: number = 0;
 
   constructor(
-    public dialogRef: MatDialogRef<DetailComponent>,
     private apiService: ApiService,
-    public authService: AuthService,
+    private authService: AuthService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private dialogRef: MatDialogRef<DetailComponent>,
     private enumService: EnumService,
     private formatService: FormatService,
     private orderService: OrderService,
     private pageService: PageService,
     private sharedService: SharedService,
-    private changeDetectorRef: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: { 
+    @Inject(MAT_DIALOG_DATA) public data: {
       selectedItem: any;
+      imageClass: string;
       items: any[];
       currentIndex: number,
       globalIndex: number,
@@ -92,15 +93,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       itemsPerPage: number,
       currentPage: number
     }
-  ) {
-    const dataSubscription = this.pageService.currentData$.subscribe(updatedData => {
-      this.data.items = updatedData;
-      this.dataReady = true;
-      this.updateItem(this.data.globalIndex % this.data.itemsPerPage);
-    });
-
-    this.subscriptions.add(dataSubscription);
-  }
+  ) { }
 
   ngOnInit() {
     const authSub = this.authService.userRoleObservable.subscribe(role => {
@@ -111,8 +104,15 @@ export class DetailComponent implements OnInit, OnDestroy {
       this.enums = enums;
     });
 
+    const dataSub = this.pageService.currentData$.subscribe(updatedData => {
+      this.data.items = updatedData;
+      this.dataReady = true;
+      this.updateItem(this.data.globalIndex % this.data.itemsPerPage);
+    });
+
     this.subscriptions.add(authSub);
     this.subscriptions.add(enumSub);
+    this.subscriptions.add(dataSub);
   }
 
   ngOnDestroy() {
@@ -197,7 +197,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       this.data.currentIndex = newLocalIndex;
       this.data.selectedItem = this.data.items[this.data.currentIndex];
       this.formattedArtistName = this.formatService.formatArtistName(this.data.selectedItem.artistName);
-      
+
       const formattedResult = this.formatService.formatDetails(this.data.selectedItem.details);
       this.formattedDetails = formattedResult.details;
       this.formattedSubDetails = formattedResult.subDetails;
@@ -207,7 +207,6 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   updateFontSizeClass(): string {
     this.nameLength = this.data.selectedItem.artistName.length;
-    this.adjustPaddingTop();
 
     if (this.nameLength < 25) {
       return 'large-font';
@@ -215,13 +214,6 @@ export class DetailComponent implements OnInit, OnDestroy {
       return 'medium-font';
     } else {
       return 'small-font';
-    }
-  }
-
-  private adjustPaddingTop() {
-    if (this.header && this.header.nativeElement) {
-      this.currentHeaderHeight = this.header.nativeElement.offsetHeight;
-      this.detail.nativeElement.style.paddingTop = `${this.currentHeaderHeight}px`;
     }
   }
 
@@ -272,12 +264,17 @@ export class DetailComponent implements OnInit, OnDestroy {
       imgFileExt: album.imgFileExt,
       quantity: 1
     };
-    
+
     this.orderService.addItemToCart(cartItem);
   }
 
   searchForArtist(artistName: string): void {
     this.sharedService.setSearchQuery(artistName);
+    this.closeDialog();
+  }
+
+  searchForRecordLabel(recordLabel: string): void {
+    this.sharedService.setSearchQuery(recordLabel);
     this.closeDialog();
   }
 }

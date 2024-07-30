@@ -19,42 +19,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: transparent;
   border: 5px solid lightskyblue;
   border-radius: 50px;
-  display: flex;
-  height: 40vw;
+  height: 90vh;
   overflow: hidden !important;
-  width: 80vw;
+  width: 77.5vh;
 }
 
 h1 {
   color:  rgba(66, 73, 82, 0.788);
   font-family: PatrenaRolane !important;
-  font-size: 60px !important;
-  padding-bottom: 10px;
+  font-size: 5vh !important;
 }
 
 ::placeholder {
-    color: rgb(40, 140, 200);
-    font-size: large;
-}
-
-@media (max-width: 950px) {
-  .border-dialog {
-    display: block;
-    height: 80vw;
-    width: 80vw;
-  }
-}
-
-
-
-@media (max-width: 650px) {
-  .border-dialog {
-    display: block;
-    height: 150vw;
-    width: 90vw;
-  }
-  
-  h1 {
-    font-size: 10vw !important;
-  }
+  color: rgb(40, 140, 200);
+  font-size: large;
 }

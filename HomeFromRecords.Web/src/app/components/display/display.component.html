@@ -3,68 +3,42 @@
         <h1 *ngIf="this.currentSearchQuery">Results for {{this.currentSearchQuery}}</h1>
         <h1 *ngIf="!this.currentSearchQuery">Catalog</h1>
     </div>
-    <div class="pagination-container">
-        <hr>
-        <div class="pagination" *ngIf="!isLoading">
-            <button class="previous-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
-                <i class="fa-solid fa-caret-left"></i>
-            </button>
-            <span class="page-num" *ngFor="let page of surroundingPages">
-                <span class="page-ellipse" *ngIf="page === totalPages && totalPages > 5" style="margin-right: 2.75vh">...</span>
-                <a [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a>
-                <span class="page-ellipse" *ngIf="page === 1 && totalPages > 5" style="margin-left: 2.75vh">...</span>
-            </span>
-            <button class="next-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
-                <i class="fa-solid fa-caret-right"></i>
-            </button>
-        </div>
-        <mat-spinner *ngIf="isLoading" class="spinner" diameter="35"></mat-spinner>
+    <div class="spinner-container" *ngIf="isLoading" >
+        <mat-spinner class="spinner" diameter="40"></mat-spinner>  
     </div>
-    <div class="grid-detail-container">
-        <div class="grid">
-            <mat-grid-list [cols]="cols" rowHeight="1:1.75" gutterSize="25">
-                <mat-grid-tile *ngFor="let item of data; let i = index">
-                    <mat-card class="item-card">
-                        <img [ngSrc]="item.imgFileExt" width="450" height="450" [ngClass]="imageClasses[item.imgFileExt]" priority (error)="handleImageError($event, defaultImg)" (click)="openDialog(item, i)" alt="Album cover">
-                        <mat-card-header>
-                            <div mat-card-avatar class="type-icon" [style.background-image]="getIconUrl(item.format)"></div>
-                            <mat-card-title>
-                                <a (click)="searchForArtist(item.artistName)">{{this.getFormattedArtistName(item.artistName)}}</a>
-                            </mat-card-title>
-                            <mat-card-subtitle>{{item.title}}</mat-card-subtitle>
-                            <mat-card-subtitle style="font-style: italic; color: darkslategrey">
-                                <span style="font-style:italic; font-size:0.75em">
-                                    {{item.recordLabelName}}
-                                </span>
-                            </mat-card-subtitle>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <button mat-raised class="detail-btn" (click)="openDialog(item, i)">INFO</button>
-                            <mat-card-actions>
-                              <span>{{item.price}}$</span>
-                              <button mat-raised *ngIf="item.quantity >= 1" class="cart-btn" (click)="addToCart(item)"><i class="fa-solid fa-cart-shopping"></i></button>
-                              <button mat-raised *ngIf="item.quantity < 1" class="x-btn"><i class="fa-solid fa-x"></i></button>
-                            </mat-card-actions>
-                        </mat-card-content>
-                      </mat-card>
-                </mat-grid-tile>
-            </mat-grid-list>
+    <div *ngIf="!isLoading">
+        <div class="pagination-container">
+            <app-pagination></app-pagination>   
         </div>
-    </div>
-    <div class="pagination-container">
-        <div class="pagination" *ngIf="!isLoading">
-            <button class="previous-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
-                <i class="fa-solid fa-caret-left"></i>
-            </button>
-            <span class="page-num" *ngFor="let page of surroundingPages">
-                <span class="page-ellipse" *ngIf="page === totalPages && totalPages > 5" style="margin-right: 2.75vh">...</span>
-                <a [ngClass]="{'current-page': page === currentPage}" (click)="changePage(page)">{{ page }}</a>
-                <span class="page-ellipse" *ngIf="page === 1 && totalPages > 5" style="margin-left: 2.75vh">...</span>
-            </span>
-            <button class="next-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
-                <i class="fa-solid fa-caret-right"></i>
-            </button>
+        <div class="flex-container">
+            <mat-card class="flex-item mat-elevation-z0" *ngFor="let item of data; let i = index">
+                <div class="image-container">
+                    <img [ngSrc]="item.imgFileExt" [ngClass]="imageClasses[item.imgFileExt]" priority width="450" height="450" (click)="openDialog(item, i)" (error)="handleImageError($event, defaultImg)" alt="Album cover">
+                </div>
+                <mat-card-header class="flex-header">
+                    <div mat-card-avatar class="format-icon" [style.background-image]="getIconUrl(item.format)"></div>
+                    <mat-card-title>
+                        <a (click)="searchForArtist(item.artistName)">{{this.getFormattedArtistName(item.artistName)}}</a>
+                    </mat-card-title>
+                    <mat-card-subtitle>{{item.title}}</mat-card-subtitle>
+                    <mat-card-subtitle style="color: darkslategrey">
+                        <span class="recordLabelName" style="font-size: 1em">
+                            <a (click)="searchForRecordLabel(item.recordLabelName)">{{item.recordLabelName}}</a>  
+                        </span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <button mat-raised class="info-btn" (click)="openDialog(item, i)">INFO</button>
+                    <mat-card-actions>
+                      <span>{{item.price}}$</span>
+                      <button mat-raised *ngIf="item.quantity >= 1" class="cart-btn" (click)="addToCart(item)"><i class="fa-solid fa-cart-shopping"></i></button>
+                      <button mat-raised *ngIf="item.quantity < 1" class="x-btn"><i class="fa-solid fa-x"></i></button>
+                    </mat-card-actions>
+                </mat-card-content>
+            </mat-card>
         </div>
-        <mat-spinner *ngIf="isLoading" class="spinner" diameter="35"></mat-spinner>
+        <div class="pagination-container">
+            <app-pagination></app-pagination>   
+        </div>
     </div>
 </div>

@@ -15,6 +15,7 @@ namespace HomeFromRecords.Core.Data.Entities {
 
         public Guid ArtistId { get; set; }
         public Artist Artist { get; set; }
+
         public Guid RecordLabelId { get; set; }
         public RecordLabel RecordLabel { get; set; }
 
