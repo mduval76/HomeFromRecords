@@ -235,6 +235,10 @@
 }
 
 // INFO /////////////////////////////////////////////////////////////////////////////
+.details-row {
+    height: auto;
+}
+
 .fa-pencil {
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -267,11 +271,24 @@
 .country-row,
 .year-row,
 .package-row,
+.genre-row {
+    height: 8vh;
+}
+
+.format-row,
+.speed-row,
+.type-length-row,
+.catalog-row,
+.grade-row,
+.price-row,
+.quantity-row,
+.country-row,
+.year-row,
+.package-row,
 .genre-row,
 .details-row {
     display: flex;
     flex-direction: row;
-    height: 8vh;
 
     .inner-value-cell {
         padding-left: 1vh;
@@ -288,6 +305,10 @@
     .label-cell {
         font-weight: bold;
         min-width: 10vh;
+    }
+
+    .padding-cell {
+        min-width: 2vh;
     }
 
     .update-cell {
@@ -394,9 +415,39 @@
 }
 
 @media (max-width: 799px) {
+    .format-row,
+    .type-length-row,
+    .grade-row,
+    .genre-row {
+        width: 100%;
+    }
 
+    .value-cell-updating > .format-cell,
+    .value-cell-updating > .subformat-cell,
+    .value-cell-updating > .type-cell,
+    .value-cell-updating > .length-cell,
+    .value-cell-updating > .media-grade-cell,
+    .value-cell-updating > .sleeve-grade-cell,
+    .value-cell-updating > .genre-cell,
+    .value-cell-updating > .subgenre-cell {
+        max-width: 16vw;
+    }
+
+    .value-cell-updating > .speed-cell,
+    .value-cell-updating > .catalog-cell,
+    .value-cell-updating > .price-cell,
+    .value-cell-updating > .quantity-cell,
+    .value-cell-updating > .country-cell,
+    .value-cell-updating > .year-cell,
+    .value-cell-updating > .package-cell,
+    .details-value-cell-updating > .details-cell {
+        max-width: 38vw;
+    }
+
+    .details-value-cell-updating > .details-cell {
+        width: 45vw;
+    }
 }
-
 
 @media (max-width: 599px) {
 // MAIN /////////////////////////////////////////////////////////////////////////////
@@ -457,6 +508,10 @@
     }
 
 // INFO /////////////////////////////////////////////////////////////////////////////
+.details-row {
+    margin-bottom: 5vw;
+}
+
 .info-container {
     font-size: 2.75vw;
     padding: 5vw 2.75vw 0 2.75vw !important;
@@ -477,7 +532,6 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    margin-bottom: 1.5vh;
 
     .label-cell{
         height: 4.5vh;
@@ -513,7 +567,7 @@
     .value-cell-updating > .year-cell,
     .value-cell-updating > .package-cell,
     .details-value-cell-updating > .details-cell {
-        width: 45vw;
+        min-width: 45vw;
     }
 }
 

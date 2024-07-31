@@ -329,7 +329,9 @@
             </div>
             <div class="details-row">
                 <div class="label-cell">Details:</div>
-                <div class="update-value-container"><div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Details')"></i></div>
+                <div class="update-value-container">
+                    <div class="update-cell"><i class="fa-solid fa-pencil" *ngIf="isAdmin" (click)="toggleActiveField('Details')"></i></div>
+                    <div class="padding-cell" *ngIf="!isAdmin"></div>
                     <div class="details-value-cell" *ngIf="!activeFields['Details']">
                         <div class="details-list-container">
                             <ul class="details-list">
