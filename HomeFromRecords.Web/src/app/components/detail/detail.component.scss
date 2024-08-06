@@ -48,32 +48,45 @@
 }
 
 // FOOTER /////////////////////////////////////////////////////////////////////////////
-.footer-container {
-    background-color: rgb(217, 235, 198);
-    border-radius: 0 0 25px 25px;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
+.button-container > button {
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 2.5vh;
+    padding: 1vh;
+}
+
+.clear-btn {
+    background-color:  rgb(200, 40, 40);
+    margin-left: 1vh;
+}
+
+.clear-btn:hover {
+    background-color:  rgb(214, 100, 100);
+}
+
+.clear-btn:active {
+    background-color:  rgba(253, 6, 6, 0.836);
+}
+
+.footer-actions {
+    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 2vh;
-}
-
-.footer-price {
-    display: flex;
-    flex-direction: column;
-    font-family: Centaur !important;
-    font-size: 6vh;
-    font-weight: bold;
-    justify-content: center;
-    width: 30%;
+    vertical-align: middle;
 }
 
 .footer-cart {
     font-family: Centaur;
-    font-size: 3vh;
+    font-size: 2.5vh;
     text-align: right;
+}
+
+.footer-cart i {
+    font-size: 2.5vh;
+    padding: 1vh;
 }
 
 .footer-cart .fa-cart-shopping {
@@ -81,8 +94,7 @@
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-left: 1vw;
-    padding: 14px 13px 12px 12px ;
+    margin-left: 1vh;
 }
 
 .footer-cart .fa-cart-shopping:hover {
@@ -98,34 +110,30 @@
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-left: 25px;
+    margin-left: 1vh;
 }
 
-.button-container {
-    padding: 0.375vh 0;
-    width: 100%;
+.footer-container {
+    background-color: rgb(217, 235, 198);
+    border-radius: 0 0 25px 25px;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 3vh;
+    height: 12vh;
 }
 
-.button-container > button {
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 15px;
-}
-
-.clear-btn {
-    background-color:  rgb(200, 40, 40);
-    margin-left: 5px;
-}
-
-.clear-btn:hover {
-    background-color:  rgb(214, 100, 100);
-}
-
-.clear-btn:active {
-    background-color:  rgba(253, 6, 6, 0.836);
+.footer-price {
+    display: flex;
+    flex-direction: column;
+    font-family: Centaur !important;
+    font-size: 6vh;
+    font-weight: bold;
+    justify-content: center;
+    width: 25%;
 }
 
 .submit-btn {
@@ -272,7 +280,7 @@
 .year-row,
 .package-row,
 .genre-row {
-    height: 8vh;
+    height: 8.5vh;
 }
 
 .format-row,
@@ -289,6 +297,7 @@
 .details-row {
     display: flex;
     flex-direction: row;
+    justify-content: space-evenly;
 
     .inner-value-cell {
         padding-left: 1vh;
@@ -312,7 +321,7 @@
     }
 
     .update-cell {
-        min-width: 2vh;
+        min-width: 1.5vh;
         padding: 0 1vh;
     }
 
@@ -325,7 +334,7 @@
     }
 
     .details-value-cell-updating {
-        flex: 0 0 80%;
+        flex: 0 0 90%;
 
         .details-list-container {
             padding: 0;
@@ -337,7 +346,7 @@
         background: linear-gradient(to bottom, rgb(212, 238, 255) 5%, rgb(234, 245, 220));
         display: flex;
         flex: 1;
-        margin-bottom: 2.1vh;
+        margin: 0 0 2.1vh 0;
     }
 
     .value-cell-updating {
@@ -353,7 +362,7 @@
     .value-cell-updating > .sleeve-grade-cell,
     .value-cell-updating > .genre-cell,
     .value-cell-updating > .subgenre-cell {
-        width: 21.25vh;
+        width: 20.5vh;
     }
 
     .value-cell-updating > .speed-cell,
@@ -364,7 +373,7 @@
     .value-cell-updating > .year-cell,
     .value-cell-updating > .package-cell,
     .details-value-cell-updating > .details-cell {
-        width: 47vh;
+        width: 100%;
     }
 
     .details-list-container {
@@ -373,6 +382,13 @@
 
     .sub-details-list {
         margin-left: 2vh;
+    }
+
+    .subformat-cell,
+    .length-cell,
+    .sleeve-grade-cell, 
+    .subgenre-cell {
+        flex: 1;
     }
 }
 
@@ -414,38 +430,13 @@
     }
 }
 
-@media (max-width: 799px) {
-    .format-row,
-    .type-length-row,
-    .grade-row,
-    .genre-row {
-        width: 100%;
+@media (min-width: 600px) and (max-width: 799px) {
+    .update-cell {
+        min-width: 1.5vw;
     }
 
-    .value-cell-updating > .format-cell,
-    .value-cell-updating > .subformat-cell,
-    .value-cell-updating > .type-cell,
-    .value-cell-updating > .length-cell,
-    .value-cell-updating > .media-grade-cell,
-    .value-cell-updating > .sleeve-grade-cell,
-    .value-cell-updating > .genre-cell,
-    .value-cell-updating > .subgenre-cell {
-        max-width: 16vw;
-    }
-
-    .value-cell-updating > .speed-cell,
-    .value-cell-updating > .catalog-cell,
-    .value-cell-updating > .price-cell,
-    .value-cell-updating > .quantity-cell,
-    .value-cell-updating > .country-cell,
-    .value-cell-updating > .year-cell,
-    .value-cell-updating > .package-cell,
-    .details-value-cell-updating > .details-cell {
-        max-width: 38vw;
-    }
-
-    .details-value-cell-updating > .details-cell {
-        width: 45vw;
+    .value-cell-updating {
+        width: 16vw;
     }
 }
 
@@ -462,25 +453,44 @@
     }
 
 // FOOTER /////////////////////////////////////////////////////////////////////////////
+    .button-container > button {
+        font-size: 3.25vw;
+        padding: 1.5vw;
+    }
+
+    .footer-cart .fa-cart-shopping {
+        margin-left: 1.25vw;
+    }
+    
+    .footer-cart i {
+        font-size: 3.25vw;
+        padding: 1.5vw;
+    }
+    
+    .footer-container {
+        height: 15.75vw;
+        padding: 3.75vw;
+    }
+
     .footer-price {
-        font-size: 7.5vw;
+        font-size: 7.75vw;
     }
     
     .footer-cart {
-        font-size: 3.75vw;
+        font-size: 3.25vw;
     }
 
 // HEADER /////////////////////////////////////////////////////////////////////////////
     .header-container {
-        padding: 2.74vw;
+        padding: 2.5vw;
     }
 
     .header-label {
-        font-size: 3.45vw;
+        font-size: 3.25vw;
     }
 
     .header-artist h1 a {
-        font-size: 6.875vw !important;
+        font-size: 6.5vw !important;
     }
     
     .header-padding-cell {
@@ -488,7 +498,7 @@
     }
     
     .header-title {
-        font-size: 2.75vw;
+        font-size: 2.6vw;
     }
 
     .header-update-cell i {
@@ -544,7 +554,7 @@
 
     .value-cell {
         margin-bottom: 1.5vh;
-        max-width: 45vw;
+        width: 45vw;
     }
 
     .value-cell-updating {
@@ -567,21 +577,16 @@
     .value-cell-updating > .year-cell,
     .value-cell-updating > .package-cell,
     .details-value-cell-updating > .details-cell {
-        min-width: 45vw;
+        width: 100%;
     }
-}
-
-.update-value-container {
-    display: flex;
-    width: 100%;
 }
 
 // PREVIOUS-NEXT /////////////////////////////////////////////////////////////////////////////
     .previous-item, .next-item {
-        font-size: 10.4vw;
+        font-size: 9.75vw;
 
         i {
-            top: 41.05vw;
+            top: 39vw;
         }
     }
 }

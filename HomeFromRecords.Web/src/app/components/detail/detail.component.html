@@ -363,18 +363,20 @@
             <div class="footer-price">
                 {{data.selectedItem.price}}$
             </div>
-            <table class="footer-table">
-                <tr>
-                    <td class="footer-cart" *ngIf="!hasActiveFields() && data.selectedItem.quantity >= 1" (click)="addToCart(data.selectedItem)">Add to cart <i class="fa-solid fa-cart-shopping"></i></td>
-                    <td class="footer-cart" *ngIf="!hasActiveFields() && data.selectedItem.quantity < 1">Sold out <i class="fa-solid fa-x"></i></td>
-                    <td *ngIf="hasActiveFields()">
-                        <div class="button-container">
-                            <button class="submit-btn" (click)="onSubmit()">Submit</button>
-                            <button class="clear-btn" (click)="clearForm()">Clear</button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div class="footer-actions">
+                <div class="footer-cart" *ngIf="!hasActiveFields() && data.selectedItem.quantity >= 1" (click)="addToCart(data.selectedItem)">
+                    Add to cart <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <div class="footer-cart" *ngIf="!hasActiveFields() && data.selectedItem.quantity < 1">
+                    Sold out <i class="fa-solid fa-x"></i>
+                </div>
+                <div *ngIf="hasActiveFields()">
+                    <div class="button-container">
+                        <button class="submit-btn" (click)="onSubmit()">Submit</button>
+                        <button class="clear-btn" (click)="clearForm()">Clear</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="next-item" (click)="goToNext()">
