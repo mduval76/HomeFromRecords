@@ -325,16 +325,8 @@
         padding: 0 1vh;
     }
 
-    .details-value-cell {
-        flex: 0 0 75%;
-
-        .details-list-container {
-            padding: 0;
-        }
-    }
-
-    .details-value-cell-updating {
-        flex: 0 0 90%;
+    .details-value-cell, .details-value-cell-updating {
+        flex: 1;
 
         .details-list-container {
             padding: 0;
@@ -552,13 +544,10 @@
         margin: 0;
     }
 
-    .value-cell {
+    .value-cell, .details-value-cell,
+    .value-cell-updating, .details-value-cell-updating {
         margin-bottom: 1.5vh;
         width: 45vw;
-    }
-
-    .value-cell-updating {
-        margin: 1.5vh 0 0 0;
     }
 
     .value-cell-updating > .format-cell,

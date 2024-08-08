@@ -1,17 +1,31 @@
-.new-item-form-container {
-    display: flex;
-    margin: auto;
-    width: 85%;
+// MAIN /////////////////////////////////////////////////////////////////////////////
+.main-container {
+    padding: 3vh 3vh 3vh 5vh;
 }
 
-.title {
+// FORM /////////////////////////////////////////////////////////////////////////////
+.custom-file-upload {
     align-items: center;
+    background-color:  rgba(66, 73, 82, 0.788);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
     display: flex;
-    height: 15%;
-    margin-left: 5%;
+    font-size: x-large;
+    height: 7.25vh;
+    justify-content: center;
+    margin-left: 15px;
+    min-width: 16%;
+    padding: 10px;
 }
 
-.first-half-form, .second-half-form {
+.details-field, .matrix-field {
+    min-height: 100px;
+}
+
+.first-half-form,
+.second-half-form {
     display: flex;
     flex-direction: column;
     width: 50%;
@@ -22,21 +36,37 @@
     width: 50%;
 }
 
-.second-half-form {
-    margin-left: 1%;
-    width: 50%;
+.format-selection-container, 
+.sub-format-length-container, 
+.type-package-container,
+.genre-container, 
+.grade-container, 
+.details-container {
+    width: 100%;
 }
 
-.price-quantity-container, .country-year-container, .catalog-matrix-container,
-.image-file-container, .format-selection-container, .sub-format-length-container,
-.type-package-container, .genre-container, .grade-container {
+.image-file-container mat-form-field {
+    width: 80%;
+}
+
+.new-item-form-container {
+    display: flex;
+    margin: auto;
+    padding: 2vh 0;
+    width: 85%;
+}
+
+.price-quantity-container, 
+.country-year-container, 
+.catalog-matrix-container,
+.image-file-container, 
+.format-selection-container, 
+.sub-format-length-container,
+.type-package-container, 
+.genre-container, 
+.grade-container {
     display: flex;
     justify-content: space-between;
-}
-
-.format-selection-container, .sub-format-length-container, .type-package-container,
-.genre-container, .grade-container, .details-container {
-    width: 100%;
 }
 
 .price-quantity-container mat-form-field,
@@ -50,63 +80,30 @@
     width: 48%;
 }
 
-.image-file-container mat-form-field {
-    width: 80%;
+.second-half-form {
+    margin-left: 1%;
+    width: 50%;
 }
 
-.custom-file-upload {
-    align-items: center;
-    background-color:  rgba(66, 73, 82, 0.788);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    font-size: x-large;
-    height: 57.5px;
-    justify-content: center;
-    margin-left: 15px;
-    min-width: 16%;
-    padding: 10px;
-}
-
+// BUTTONS /////////////////////////////////////////////////////////////////////////////
 .button-container {
     display: flex;
     justify-content: flex-end;
-    width: 100%;
 }
 
 .button-container > button {
-    align-items: center;
     border: none;
     border-radius: 8px;
     color: white;
     cursor: pointer;
-    display: flex;
-    font-size: 1.5rem;
-    height: 57.5px;
-    justify-content: center;
-    width: 17.5%;
-    padding: 10px;
-}
-
-.submit-btn {
-    background-color:  rgb(40, 140, 200);
-    width: 15%;
-}
-
-.submit-btn:hover {
-    background-color:  rgb(91, 179, 235);
-}
-
-.submit-btn:active {
-    background-color:  rgb(0, 96, 156);
+    font-size: 2.5vh;
+    height: 7.25vh;
+    padding: 1.5vh;
 }
 
 .clear-btn {
-    align-items: center;
     background-color:  rgb(238, 61, 49);
-    margin-left: 20px;
+    margin-left: 2vh;
 }
 
 .clear-btn:hover {
@@ -117,18 +114,22 @@
     background-color:  rgb(165, 12, 1);
 }
 
-.details-field, .matrix-field {
-    min-height: 100px;
+.submit-btn {
+    background-color:  rgb(40, 140, 200);
 }
 
-@media (max-width: 950px)  {
+.submit-btn:hover {
+    background-color:  rgb(91, 179, 235);
+}
+
+.submit-btn:active {
+    background-color:  rgb(0, 96, 156);
+}
+
+@media (max-width: 949px)  {
     .new-item-form-container {
         display: flex;
         flex-direction: column;
-    }
-
-    .title {
-        height: 10%;
     }
     
     .first-half-form  {
@@ -142,14 +143,15 @@
     }
 }
 
-@media (max-width: 650px) {
-    .title {
-        height: 7.5%;
-    }
-
-    .price-quantity-container, .country-year-container, .catalog-matrix-container,
-    .format-selection-container, .sub-format-package-container, .type-length-container,
-    .genre-container, .grade-container {
+@media (max-width: 599px) {
+    .price-quantity-container, 
+    .country-year-container, 
+    .catalog-matrix-container,
+    .format-selection-container, 
+    .sub-format-package-container, 
+    .type-length-container,
+    .genre-container, 
+    .grade-container {
         display: flex;
         flex-direction: column;
     }
@@ -165,7 +167,7 @@
         width: 100%;
     }
 
-    .mainFormat-field {
+    .main-format-field {
         width: 100% !important;
     }
 }

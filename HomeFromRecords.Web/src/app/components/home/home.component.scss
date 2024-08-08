@@ -1,17 +1,16 @@
-.title {
-    padding: 2.5%;
-    width: 100%;
-}
-
-.content {
+.content-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    width: 100%;
+    margin: auto;
+    padding: 2vh 0;
+    width: 85%;
 
     img {
-        margin: auto;
-        padding: 0px 25px 20px 0px ;
-        width: 90%;
+        width: 100%;
     }
+}
+
+.main-container {
+    padding: 3vh 3vh 3vh 5vh;
 }
