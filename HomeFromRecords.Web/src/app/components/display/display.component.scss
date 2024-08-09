@@ -1,4 +1,4 @@
-// DISPLAY /////////////////////////////////////////////////////////////////////////////
+// MAIN ////////////////////////////////////////////////////////////////////////////////
 .display-container {
     height: 100%;
     width: 100%;
@@ -8,51 +8,37 @@
         width: 100%;
     }
 }
-
-.cart-btn {
-    background-color: rgb(66, 204, 66);
+  
+.pagination-container {
+    margin: auto;
+    width: 75%;
 }
 
-.cart-btn:hover {
-    background-color: rgb(66, 204, 66, 0.75);
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-bottom: 25px;
+    padding: 1.5vw;
+    width: 75%;
 }
 
-.cart-btn:active {
-    background-color: rgb(7, 151, 7);
-}
-
-.info-btn:hover, .cart-btn:hover {
-    cursor: pointer;
-}
-
-.info-btn {
-    background-color: rgb(49, 157, 224);
-}
-
-.info-btn:hover {
-    background-color: rgb(49, 157, 224, 0.75);
-}
-
-.info-btn:active {
-    background-color: rgba(14, 119, 184, 1.0);
-}
-
-.x-btn {
-    background-color: rgb(172, 18, 18);
-}
-
-
+// CARD-ITEM ///////////////////////////////////////////////////////////////////////////
 .flex-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     height: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
     margin: auto;
     margin-bottom: 5vh;
     width: 75%;
 }
 
+.flex-container::after {
+    content: '';
+    width: calc((100% / 3) - 55px);
+}
 
 .flex-header {
     background-color: rgb(212, 238, 255);
@@ -101,11 +87,6 @@ img:hover {
     transform: scale(0.95);
     transition: transform 0.3s ease;
 }
-  
-.pagination-container {
-    margin: auto;
-    width: 75%;
-}
 
 .recordLabelName a {
     cursor: pointer;
@@ -117,26 +98,6 @@ img:hover {
 
 .recordLabelName a:active {
     color: rgb(17, 17, 141) !important;
-}
-
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    margin: auto;
-    margin-bottom: 25px;
-    padding: 1.5vw;
-    width: 75%;
-}
-
-.tall-format {
-    object-fit: contain;
-}
-
-
-.wide-format {
-    object-fit: contain;
-    object-position: top;
-    padding-bottom: 10%;
 }
 
 mat-card-actions {
@@ -199,7 +160,55 @@ mat-card-subtitle {
     }
 }
 
-@media (max-width: 950px) {
+// BUTTONS /////////////////////////////////////////////////////////////////////////////
+.cart-btn {
+    background-color: rgb(66, 204, 66);
+}
+
+.cart-btn:hover {
+    background-color: rgb(66, 204, 66, 0.75);
+}
+
+.cart-btn:active {
+    background-color: rgb(7, 151, 7);
+}
+
+.info-btn:hover, .cart-btn:hover {
+    cursor: pointer;
+}
+
+.info-btn {
+    background-color: rgb(49, 157, 224);
+}
+
+.info-btn:hover {
+    background-color: rgb(49, 157, 224, 0.75);
+}
+
+.info-btn:active {
+    background-color: rgba(14, 119, 184, 1.0);
+}
+
+.x-btn {
+    background-color: rgb(172, 18, 18);
+}
+
+.tall-format {
+    object-fit: contain;
+}
+
+
+.wide-format {
+    object-fit: contain;
+    object-position: top;
+    padding-bottom: 10%;
+}
+
+@media (max-width: 949px) {
+    .flex-container::after {
+        width: calc((100% / 2) - 50px);
+    }
+
     .flex-header {
         padding: 1.5vw;
     }
