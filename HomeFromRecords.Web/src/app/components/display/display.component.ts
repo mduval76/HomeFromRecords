@@ -1,17 +1,16 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatGridListModule } from '@angular/material/grid-list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ApiService } from '../../services/api/api.service';
 import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
 import { PageService } from '../../services/page/page.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { DetailComponent } from '../detail/detail.component';
+import { PaginationComponent } from '../pagination/pagination.component';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
@@ -30,9 +29,9 @@ interface EnumItem {
     MatCardModule,
     MatDialogModule,
     MatDividerModule,
-    MatGridListModule,
     MatProgressSpinnerModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    PaginationComponent
   ],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
@@ -48,19 +47,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
   globalIndex: number = 0;
   imageClasses: Record<string, string> = {};
   isLoading: boolean = false;
-  surroundingPages: number[] = [];
-  needsLeadingEllipse: boolean = false;
-  needsTrailingEllipse: boolean = false;
-
+  currentPage: number = 1;
+  itemsPerPage: number = 12;
+  totalItems: number = 0;
 
   alphaSortCriteria: string = 'ascending';
   mainSortCriteria: string = 'Artist';
   priceSortCriteria: string = 'none';
-
-  @Input() currentPage = 1;
-  @Input() itemsPerPage = 12;
-  @Input() totalItems!: number;
-  @Output() pageChanged: EventEmitter<number> = new EventEmitter();
 
   private subscriptions: Subscription = new Subscription();
 
@@ -70,31 +63,17 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private pageService: PageService,
     private sharedService: SharedService,
-    private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog
     ) {}
 
   ngOnInit() {
-    this.isLoading = true;
     this.fetchData(this.format);
-    this.setupSubscriptions();
-    this.setupBreakpointObserver();
     this.fetchEnums();
-    this.isLoading = false;
+    this.setupSubscriptions();
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.itemsPerPage);
-  }
-
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.pageService.changePage(page);
-    }
   }
 
   getIconUrl(format: string): string {
@@ -129,13 +108,16 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
   
     let url = `${baseUrl}?${queryParams}`;
-    console.log('Fetching data from URL:', url);
+    this.isLoading = true;
 
     this.apiService.getData(url).subscribe({
       next: (response) => {
-        console.log('Response:', response);
         this.totalItems = response.length;
+        console.log('Total items:', this.totalItems);
         let sortedData = response.items;
+        this.pageService.setTotalItems(this.totalItems);
+        this.pageService.setSurroundingPages();
+
         if (this.priceSortCriteria !== 'none') {
           sortedData = this.applyPriceSorting(response, this.priceSortCriteria);
         } 
@@ -158,11 +140,12 @@ export class DisplayComponent implements OnInit, OnDestroy {
         });
 
         this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
-        this.surroundingPages = this.pageService.calculateSurroundingPages(this.totalPages, this.currentPage);
-        this.pageService.updateData(this.data);
+        this.pageService.setCurrentData(this.data);
+        this.isLoading = false;
       },
       error: (error) => {
         console.error(error);
+        this.isLoading = false;
       }
     });
   }
@@ -243,26 +226,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return this.formattedArtistName;
   }
 
-  getImageClass(imageUrl: string): string {
-    let imageClass = '';
-    const img = new Image();
-    img.onload = () => {
-      const isSquare = img.width === 500 && img.height === 500;
-      const isTall = img.height === 500 && img.width < 500;
-  
-      if (isSquare) {
-        imageClass = 'square-format';
-      } else if (isTall) {
-        imageClass = 'tall-format';
-      } else {
-        imageClass = 'wide-format';
-      }
-    };
-    img.src = imageUrl;
-  
-    return imageClass;
-  }
-
   updateImageClass(imageUrl: string) {
     const img = new Image();
     img.onload = () => {
@@ -296,11 +259,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   openDialog(clickedItem: any, itemIndex: number) {
     const globalIndex = (this.currentPage - 1) * this.itemsPerPage + itemIndex;
+    
     const dialogRef = this.dialog.open(DetailComponent, {
       panelClass: 'border-dialog',
       data: { 
         selectedItem: clickedItem, 
         items: this.data, 
+        imageClass: this.imageClasses[clickedItem.imgFileExt],
         currentIndex: itemIndex, 
         globalIndex: globalIndex,
         totalItems: this.totalItems,
@@ -354,11 +319,11 @@ export class DisplayComponent implements OnInit, OnDestroy {
     const pageServiceSubscription = this.pageService.currentPage$.subscribe(page => {
       if (this.currentPage !== page) {
         this.currentPage = page;
+        this.pageService.changePage(this.currentPage);
         if (this.isLoading) return;
         this.fetchData(this.format);
       }
     });
-
 
     const refreshNeededSubscription = this.sharedService.getRefreshNeeded().subscribe(needed => {
       if (needed) {
@@ -377,22 +342,9 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   searchForArtist(artistName: string): void {
     this.sharedService.setSearchQuery(artistName);
-  }
-
-  private setupBreakpointObserver() {
-    const customBreakpoints: { [key: string]: number } = {
-      '(min-width: 951px)': 3,
-      '(min-width: 651px) and (max-width: 950px)': 2,
-      '(max-width: 650px)': 1
-    };
-
-    this.breakpointObserver.observe(Object.keys(customBreakpoints)).subscribe(result => {
-      for (const query of Object.keys(customBreakpoints)) {
-        if (result.breakpoints[query]) {
-          this.cols = customBreakpoints[query];
-          break;
-        }
-      }
-    });
+  }  
+  
+  searchForRecordLabel(recordLabel: string): void {
+    this.sharedService.setSearchQuery(recordLabel);
   }
 }

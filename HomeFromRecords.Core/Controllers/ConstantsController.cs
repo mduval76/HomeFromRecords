@@ -45,8 +45,8 @@ namespace HomeFromRecords.Core.Controllers {
                 { "CD_R", "CD-R" },
                 { "DVD", "DVD" },
                 { "DVD_R", "DVD-R" },
-                { "BLURAY", "Blu-ray" },
-                { "EIGHT_TRACK", "8-track" },
+                { "BLURAY", "Blu-Ray" },
+                { "EIGHT_TRACK", "8-Track" },
                 { "PICTURE_DISC", "Picture-Disc"},
                 { "NM", "NM" },
                 { "VG_PLUS", "VG+" },
@@ -55,9 +55,9 @@ namespace HomeFromRecords.Core.Controllers {
                 { "EP", "EP" },
                 { "LP", "LP" },
                 { "PVC", "PVC" },
-                { "THIRTY_THREE", "33rpm" },
-                { "FORTY_FIVE", "45rpm" },
-                { "SEVENTY_EIGHT", "78rpm"}
+                { "THIRTY_THREE", "33 1/3 rpm" },
+                { "FORTY_FIVE", "45 rpm" },
+                { "SEVENTY_EIGHT", "78 rpm"}
             };
 
             if (transformations.TryGetValue(name, out var transformedName)) {

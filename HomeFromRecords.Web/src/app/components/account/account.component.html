@@ -1,112 +1,114 @@
-<mat-card class="login-form-container">
-    <div class="title">
-        <h1>{{ isLogin ? 'Login - You know you wanna!' : this.isAdminLogin ? 'Update' : 'Register - Fuck yeah!' }}</h1>
-    </div>
-    <div class="login-fields-container" [formGroup]="form">
-        <mat-form-field *ngIf="!isLogin" class="username-field">
-            <mat-label>Username</mat-label>
-            <input matInput type="text" formControlName="UserName">
-            <mat-error *ngIf="form.get('UserName')?.errors?.['required']">{{isFieldRequired('UserName')}}</mat-error>
-        </mat-form-field>
-
-        <div *ngIf="!isLogin" class="name-fields-container">
-            <mat-form-field class="first-name-field">
-                <mat-label>First Name</mat-label>
-                <input matInput type="text" formControlName="FirstName">
-                <mat-error *ngIf="form.get('FirstName')?.errors?.['required']">{{isFieldRequired('FirstName')}}</mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="last-name-field">
-                <mat-label>Last Name</mat-label>
-                <input matInput type="text" formControlName="LastName">
-                <mat-error *ngIf="form.get('LastName')?.errors?.['required']">{{isFieldRequired('LastName')}}</mat-error>
-            </mat-form-field>
+<div class="main-container">
+    <mat-card class="form-container">
+        <div class="title">
+            <h1>{{ isLogin ? 'Login' : this.isAdminLogin ? 'Update' : 'Register' }}</h1>
         </div>
-
-        <div *ngIf="!isLogin" class="email-phone-fields-container">
-            <mat-form-field class="email-reg-field">
+        <div class="fields-container" [formGroup]="form">
+            <mat-form-field *ngIf="!isLogin" class="username-field">
+                <mat-label>Username</mat-label>
+                <input matInput type="text" formControlName="UserName">
+                <mat-error *ngIf="form.get('UserName')?.errors?.['required']">{{isFieldRequired('UserName')}}</mat-error>
+            </mat-form-field>
+    
+            <div *ngIf="!isLogin" class="name-fields-container">
+                <mat-form-field class="first-name-field">
+                    <mat-label>First Name</mat-label>
+                    <input matInput type="text" formControlName="FirstName">
+                    <mat-error *ngIf="form.get('FirstName')?.errors?.['required']">{{isFieldRequired('FirstName')}}</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field class="last-name-field">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput type="text" formControlName="LastName">
+                    <mat-error *ngIf="form.get('LastName')?.errors?.['required']">{{isFieldRequired('LastName')}}</mat-error>
+                </mat-form-field>
+            </div>
+    
+            <div *ngIf="!isLogin" class="email-phone-fields-container">
+                <mat-form-field class="email-reg-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="text" formControlName="Email">
+                    <mat-error *ngIf="form.get('Email')?.invalid">{{emailErrorMessage}}</mat-error>
+                </mat-form-field>
+                <mat-form-field class="phone-field">
+                    <mat-label>Phone</mat-label>
+                    <input matInput type="text" formControlName="Phone">
+                    <mat-error *ngIf="form.get('Phone')?.errors?.['required']">{{isFieldRequired('Phone')}}</mat-error>
+                </mat-form-field>
+            </div>
+    
+            <mat-form-field *ngIf="isLogin" class="email-log-field">
                 <mat-label>Email</mat-label>
-                <input matInput type="text" formControlName="Email">
+                <input matInput type="text" formControlName="Email" (keyup.enter)="onSubmit()">
                 <mat-error *ngIf="form.get('Email')?.invalid">{{emailErrorMessage}}</mat-error>
             </mat-form-field>
-            <mat-form-field class="phone-field">
-                <mat-label>Phone</mat-label>
-                <input matInput type="text" formControlName="Phone">
-                <mat-error *ngIf="form.get('Phone')?.errors?.['required']">{{isFieldRequired('Phone')}}</mat-error>
-            </mat-form-field>
-        </div>
-
-        <mat-form-field *ngIf="isLogin" class="email-log-field">
-            <mat-label>Email</mat-label>
-            <input matInput type="text" formControlName="Email" (keyup.enter)="onSubmit()">
-            <mat-error *ngIf="form.get('Email')?.invalid">{{emailErrorMessage}}</mat-error>
-        </mat-form-field>
-        
-        <mat-form-field *ngIf="isLogin" class="pwd-log-field">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="Password" (keyup.enter)="onSubmit()">
-            <mat-error *ngIf="form.get('Password')?.invalid">{{pwdErrorMessage}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="!isLogin" class="street-field">
-            <mat-label>Street address</mat-label>
-            <input matInput type="text" formControlName="StreetAddress">
-            <mat-error *ngIf="form.get('StreetAddress')?.errors?.['required']">{{isFieldRequired('StreetAddress')}}</mat-error>
-        </mat-form-field>
-
-        <div *ngIf="!isLogin" class="city-region-fields-container">
-            <mat-form-field class="city-field">
-                <mat-label>City</mat-label>
-                <input matInput type="text" formControlName="City">
-                <mat-error *ngIf="form.get('City')?.errors?.['required']">{{isFieldRequired('City')}}</mat-error>
-            </mat-form-field>
-            <mat-form-field class="region-field">
-                <mat-label>Region</mat-label>
-                <input matInput type="text" formControlName="Region">
-                <mat-error *ngIf="form.get('Region')?.errors?.['required']">{{isFieldRequired('Region')}}</mat-error>
-            </mat-form-field>
-        </div>
-
-        <div *ngIf="!isLogin" class="country-postal-fields-container">
-            <mat-form-field class="country-field">
-                <mat-label>Country</mat-label>
-                <input matInput type="text" formControlName="Country">
-                <mat-error *ngIf="form.get('Country')?.errors?.['required']">{{isFieldRequired('Country')}}</mat-error>
-            </mat-form-field>
-            <mat-form-field class="postal-field">
-                <mat-label>Postal code</mat-label>
-                <input matInput type="text" formControlName="PostalCode">
-                <mat-error *ngIf="form.get('PostalCode')?.errors?.['required']">{{isFieldRequired('PostalCode')}}</mat-error>
-            </mat-form-field>
-        </div>
-
-        <div *ngIf="!isLogin" class="pwd-fields-container">
-            <mat-form-field class="pwd-reg-field">
+            
+            <mat-form-field *ngIf="isLogin" class="pwd-log-field">
                 <mat-label>Password</mat-label>
-                <input matInput type="password" formControlName="Password">
+                <input matInput type="password" formControlName="Password" (keyup.enter)="onSubmit()">
                 <mat-error *ngIf="form.get('Password')?.invalid">{{pwdErrorMessage}}</mat-error>
             </mat-form-field>
-            <mat-form-field class="confirm-pwd-field">
-                <mat-label>Confirm password</mat-label>
-                <input matInput type="password" formControlName="ConfirmPassword">
-                <mat-error *ngIf="form.get('Password')?.invalid">{{pwdErrorMessage}}</mat-error>
+    
+            <mat-form-field *ngIf="!isLogin" class="street-field">
+                <mat-label>Street address</mat-label>
+                <input matInput type="text" formControlName="StreetAddress">
+                <mat-error *ngIf="form.get('StreetAddress')?.errors?.['required']">{{isFieldRequired('StreetAddress')}}</mat-error>
             </mat-form-field>
-        </div>
-
-        <div class="btn-invite-container">
-            <p>{{ isLogin ? 'Not a member yet? Want some crazy shit in your inbox?' : 'Already a member? Ready for some crate-digging?' }}<br>Use the
-                <a (click)="switchForm()" class="switch-form-link">{{ isLogin ? 'REGISTER' : 'LOGIN' }}</a> form instead.
-            </p>
-            <div class="button-container" *ngIf="!isLoading">
-                <button mat-raised class="submit-btn" (click)="onSubmit()">{{ isLogin ? 'Login' : this.isAdminLogin ? 'Update' : 'Register' }}</button>
-                <button *ngIf="!isLogin" mat-raised class="clear-btn" (click)="clearForm()">Clear</button>
+    
+            <div *ngIf="!isLogin" class="city-region-fields-container">
+                <mat-form-field class="city-field">
+                    <mat-label>City</mat-label>
+                    <input matInput type="text" formControlName="City">
+                    <mat-error *ngIf="form.get('City')?.errors?.['required']">{{isFieldRequired('City')}}</mat-error>
+                </mat-form-field>
+                <mat-form-field class="region-field">
+                    <mat-label>Region</mat-label>
+                    <input matInput type="text" formControlName="Region">
+                    <mat-error *ngIf="form.get('Region')?.errors?.['required']">{{isFieldRequired('Region')}}</mat-error>
+                </mat-form-field>
             </div>
-            <mat-spinner *ngIf="isLoading" class="spinner" diameter="50"></mat-spinner>
+    
+            <div *ngIf="!isLogin" class="country-postal-fields-container">
+                <mat-form-field class="country-field">
+                    <mat-label>Country</mat-label>
+                    <input matInput type="text" formControlName="Country">
+                    <mat-error *ngIf="form.get('Country')?.errors?.['required']">{{isFieldRequired('Country')}}</mat-error>
+                </mat-form-field>
+                <mat-form-field class="postal-field">
+                    <mat-label>Postal code</mat-label>
+                    <input matInput type="text" formControlName="PostalCode">
+                    <mat-error *ngIf="form.get('PostalCode')?.errors?.['required']">{{isFieldRequired('PostalCode')}}</mat-error>
+                </mat-form-field>
+            </div>
+    
+            <div *ngIf="!isLogin" class="pwd-fields-container">
+                <mat-form-field class="pwd-reg-field">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" formControlName="Password">
+                    <mat-error *ngIf="form.get('Password')?.invalid">{{pwdErrorMessage}}</mat-error>
+                </mat-form-field>
+                <mat-form-field class="confirm-pwd-field">
+                    <mat-label>Confirm password</mat-label>
+                    <input matInput type="password" formControlName="ConfirmPassword">
+                    <mat-error *ngIf="form.get('Password')?.invalid">{{pwdErrorMessage}}</mat-error>
+                </mat-form-field>
+            </div>
+    
+            <div class="btn-invite-container">
+                <p>{{ isLogin ? 'Not a member yet? Want some crazy shit in your inbox?' : 'Already a member? Ready for some crate-digging?' }}<br><br>Use the
+                    <a (click)="switchForm()" class="switch-form-link">{{ isLogin ? 'REGISTER' : 'LOGIN' }}</a> form instead.
+                </p>
+                <div class="button-container" *ngIf="!isLoading">
+                    <button *ngIf="!isLogin" mat-raised class="clear-btn" (click)="clearForm()">Clear</button>
+                    <button mat-raised class="submit-btn" (click)="onSubmit()">{{ isLogin ? 'Login' : this.isAdminLogin ? 'Update' : 'Register' }}</button>
+                </div>
+                <mat-spinner *ngIf="isLoading" class="spinner" diameter="50"></mat-spinner>
+            </div>
         </div>
+    </mat-card>
+    <div class="logout-container" *ngIf="isLogin">
+        <p>Nah bro... I'm just here to 
+            <a class="logout-link" (click)="logout()">LOGOUT</a>. Let me outta here!
+        </p>
     </div>
-</mat-card>
-<div class="logout-container" *ngIf="isLogin">
-    <p>Nah bro... I'm just here to 
-        <a class="logout-link" (click)="logout()">LOGOUT</a>. Let me outta here!
-    </p>
 </div>

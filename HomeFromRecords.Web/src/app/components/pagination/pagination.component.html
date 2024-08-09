@@ -1,0 +1,16 @@
+<hr>
+<div class="paginator">
+    <button class="previous-btn" (click)="onPageChange(currentPage - 1)" *ngIf="currentPage !== 1 && totalPages !== 1">
+        <i class="fa-solid fa-caret-left"></i>
+    </button>
+    <div class="empty-space" *ngIf="currentPage === 1"></div>
+    <span class="page-num" *ngFor="let page of surroundingPages">
+        <a id="ellipse" *ngIf="page === totalPages && totalPages > 10 && surroundingPages[surroundingPages.length - 2] < totalPages - 1">...</a>
+        <a [ngClass]="{'current-page': page === currentPage}" (click)="onPageChange(page)">{{ page }}</a>
+        <a id="ellipse" *ngIf="page === 1 && totalPages > 10 && surroundingPages[1] > 2">...</a>
+    </span>
+    <button class="next-btn" (click)="onPageChange(currentPage + 1)" *ngIf="currentPage !== totalPages && totalPages !== 1">
+        <i class="fa-solid fa-caret-right"></i>
+    </button>
+    <div class="empty-space" *ngIf="currentPage === totalPages"></div>
+</div>

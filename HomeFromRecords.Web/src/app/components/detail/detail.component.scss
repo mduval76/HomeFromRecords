@@ -1,97 +1,92 @@
+// MAIN /////////////////////////////////////////////////////////////////////////////
+.content-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow-x: hidden;
+    width: 100%;
+}   
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2vh;
+
+    img {
+        height: auto;
+        max-height: 65vmax;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .square-format {
+        max-height: 65vh;
+        width: 100%;
+        transform: scaleX(1.1), scaleY(1.1);
+    }
+
+    .tall-format {
+        max-height: 65vh;
+        width: auto;
+        transform: none;
+    }
+
+    .wide-format {
+        max-height: none;
+        max-width: 65vh;
+    }
+}
+
 .main-container {
     background-color: whitesmoke;
     display: flex;
-    height: 100%;
-    justify-content: left;
-    overflow: hidden;
-    width: 100%
-}
-
-.album-img-details-container {
-    display: flex;
-    height: 100%;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 5vh 1vh;
     width: 100%;
 }
 
-.album-cover-container {
-    margin: 4% 2% 4% 1%;
-}
-
-.album-cover-container img {
-    border: 1px solid black;
-    height: 100%;
-    width: auto;
-}
-
-.album-details-container {
-    display: flex;
-    flex-direction: column;
-    height: 33.5vw;
-    justify-content: space-around;
-    margin: 4% 1% 0% 0%;
-    position: relative;
-    width: 100%
-}
-
-.album-label {
-    font-size: 1vw;
-}
-
-.album-title {
-    font-size: 1.25vw;
-}
-
-.sub-details-list {
-    padding-left: 20px;
-}
-
-.header-table-container {
-    background-color: rgb(190, 227, 252);
-    border-bottom: 1px solid black;
-    border-radius: 0px 25px 0px 0px;
-    flex-shrink: 0;
-    padding: 1vw 0vw;
-    position: absolute;
-    top: 0px;
-    width: 100%;
-    z-index: 2;
-}
-
-.header-table-container table * {
-    padding: 0.15vw 0vw;
-}
-
-.searchable-artist a {
+// FOOTER /////////////////////////////////////////////////////////////////////////////
+.button-container > button {
+    border: none;
+    border-radius: 8px;
+    color: white;
     cursor: pointer;
+    font-size: 2.5vh;
+    padding: 1vh;
 }
 
-.searchable-artist a:hover {
-    color: rgb(82, 99, 252) !important;
+.clear-btn {
+    background-color:  rgb(200, 40, 40);
+    margin-left: 1vh;
 }
 
-.searchable-artist a:active {
-    color: rgb(17, 17, 141) !important;
+.clear-btn:hover {
+    background-color:  rgb(214, 100, 100);
 }
 
-.footer-table-container {
-    background-color: rgb(217, 235, 198);
-    border-radius: 0px 0px 25px 0px;
-    border-top: 1px solid black;
-    bottom: 0px;
+.clear-btn:active {
+    background-color:  rgba(253, 6, 6, 0.836);
+}
+
+.footer-actions {
+    align-items: center;
     display: flex;
-    padding: 1.25vw;
-    position: absolute;
-    width: 100%;
-}
-
-.footer-price {
-    width: 30%;
+    flex-direction: row;
+    justify-content: space-between;
+    vertical-align: middle;
 }
 
 .footer-cart {
     font-family: Centaur;
-    font-size: 1.5vw;
+    font-size: 2.5vh;
     text-align: right;
+}
+
+.footer-cart i {
+    font-size: 2.5vh;
+    padding: 1vh;
 }
 
 .footer-cart .fa-cart-shopping {
@@ -99,8 +94,7 @@
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-left: 1vw;
-    padding: 14px 13px 12px 12px ;
+    margin-left: 1vh;
 }
 
 .footer-cart .fa-cart-shopping:hover {
@@ -116,203 +110,30 @@
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-left: 25px;
-    padding: 14px 17px 12px 17px ;
+    margin-left: 1vh;
 }
 
-.detail-table-container {
-    bottom: 0;
-    flex-grow: 1;
-    margin-bottom: 5.5vw;
-    margin-top: 2%;
-    max-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 0vw 1vw;
-    position: absolute;
-    top: 0;
+.footer-container {
+    background-color: rgb(217, 235, 198);
+    border-radius: 0 0 25px 25px;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 3vh;
+    height: 12vh;
 }
 
-.detail-table-container table {
-    table-layout: fixed;
-    width: 100%;
-}
-
-.detail-table-container * {
-    font-size: 0.8vw;
-    margin-bottom: 5px;
-    vertical-align: top;
-}
-
-.formatted-details-container {
-    margin: 5px 25px 0px 25px;
-    width: 100%;
-}
-
-.header-table, .footer-table {
-    width: 100%;
-}
-
-mat-form-field {
-    height: 50px;
-}
-
-.format-table .value-cell,
-.type-length-table .value-cell,
-.condition-table .value-cell,
-.genre-table .value-cell {
-    background: linear-gradient(to bottom, rgb(212, 238, 255) 5%, rgb(234, 245, 220));
-}
-
-.format-table .value-cell-updating,
-.type-length-table .value-cell-updating,
-.condition-table .value-cell-updating,
-.genre-table .value-cell-updating,
-.catalog-number-table .value-cell-updating,
-.price-table .value-cell-updating,
-.quantity-table .value-cell-updating,
-.country-table .value-cell-updating,
-.year-table .value-cell-updating,
-.packaging-table .value-cell-updating {
-    background: none !important;
-}
-
-.format-table .value-cell-updating .format-cell,
-.format-table .value-cell-updating .subformat-cell,
-.format-table .value-cell-updating .speed-cell,
-.type-length-table .value-cell-updating .type-cell,
-.type-length-table .value-cell-updating .length-cell,
-.condition-table .value-cell-updating .mediaGrade-cell,
-.condition-table .value-cell-updating .sleeveGrade-cell,
-.genre-table .value-cell-updating .genre-cell,
-.genre-table .value-cell-updating .subgenre-cell,
-.catalog-number-table .value-cell-updating .catalog-cell,
-.price-table .value-cell-updating .price-cell,
-.quantity-table .value-cell-updating .quantity-cell,
-.country-table .value-cell-updating .country-cell,
-.year-table .value-cell-updating .year-cell,
-.packaging-table .value-cell-updating .package-cell {
-    width: 100%;
-}
-
-.formatted-details-updating .details-cell {
-    width: 100%;
-}
-
-.catalog-number-table .value-cell,
-.price-table .value-cell,
-.quantity-table .value-cell,
-.country-table .value-cell,
-.year-table .value-cell,
-.packaging-table .value-cell {
-    background: linear-gradient(to bottom, rgb(212, 238, 255), rgb(234, 245, 220));
-}
-
-.next-item {
+.footer-price {
     display: flex;
     flex-direction: column;
-    margin-right: 10px;
-}
-
-.previous-item {
-    margin-left: 10px;
-}
-
-.fa-caret-left, .fa-caret-right {
-    background-color: transparent;
-    font-size: 5rem;
-    height: 25px;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.fa-caret-left, .fa-caret-right {
-    margin-top: 17.5vw;
-}
-
-.fa-caret-left:hover, .fa-caret-right:hover {
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-    opacity: 0.5;
-}
-
-.fa-pencil {
-    margin-top: 5px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.fa-pencil:hover {
-    cursor: pointer;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.fa-pencil:active {
-    color: blue;
-}
-
-.label-cell, .value-cell, .padding-cell, .detail-label-cell {
-    padding: 5px 2.5px;
-    word-wrap: break-word; 
-}
-
-.label-cell, .value-cell, .padding-cell {
-    width: 25%;
-}
-
-.label-cell, .detail-label-cell {
+    font-family: Centaur !important;
+    font-size: 6vh;
     font-weight: bold;
-}
-
-.detail-label-cell {
-    width: 22.5%;
-}
-
-.detail-value-cell {
-    padding: 0px;
-}
-
-.update-cell {
-    padding: 2.5px;
-    width: 20px;
-}
-
-.name-cell .fa-pencil {
-    padding-bottom: 25px;
-}
-
-.x-cell {
-    cursor: pointer;
-    vertical-align: top;
-    width: 5%;
-}
-
-.small-font { 
-    font-size: 1.75vw !important;
-}
-
-.medium-font { 
-    font-size: 2vw !important; 
-}
-
-.large-font { 
-    font-size: 2.5vw !important;
-}
-
-.button-container {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-}
-
-.button-container > button {
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 15px;
+    justify-content: center;
+    width: 25%;
 }
 
 .submit-btn {
@@ -327,74 +148,434 @@ mat-form-field {
     background-color:  rgba(3, 158, 255, 0.911);
 }
 
-.clear-btn {
-    background-color:  rgb(200, 40, 40);
-    margin-left: 5px;
+// HEADER /////////////////////////////////////////////////////////////////////////////
+.artist-row {
+    padding-right: 3vh;
 }
 
-.clear-btn:hover {
-    background-color:  rgb(214, 100, 100);
+.artist-row, .title-row, .label-row {
+    align-items: center;
+    display: flex;
+    min-height: 7vh;
+    flex-direction: row;
 }
 
-.clear-btn:active {
-    background-color:  rgba(253, 6, 6, 0.836);
+.header-container {
+    background-color: rgb(190, 227, 252);
+    border-radius: 25px 25px 0 0;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    padding: 2vh;
+    position: relative;
 }
 
-#subdetail {
-    margin-left: 50px;
+.header-update-cell i {
+    cursor: pointer;
+    font-size: 2vh;
+    padding-right: 1vh;
 }
 
-h1, h2 {
-    font-family: Centaur !important;
-    font-weight: bolder;
-    margin: 0px;
+.header-padding-cell {
+    width: 2vh;
 }
 
-h2 {
+.header-artist {
+    flex-grow: 1;
+
+    h1 {
+        font-family: Centaur !important;
+        font-weight: bolder;
+    }
+}
+
+.header-label {
+    flex-grow: 1;
     font-size: 2.5vh;
+    font-weight: bolder;
 }
 
-h3 {
-    margin: 0px;
+.header-title {
+    flex-grow: 1;
+    font-size: 2vh;
 }
 
-hr {
-    margin: 0px 0px 25px 0px;
-}
+.header-artist h1 a, .header-label a, .x-cell i {
+    cursor: pointer;
 
-@media (max-width: 950px) {
-    .main-container {
-        overflow: visible;
+    &:hover {
+        color: rgb(82, 99, 252) !important;
     }
 
-    .album-img-details-container {
-        flex-direction: column;
-        height: 100%;
+    &:active {
+        color: rgb(17, 17, 141) !important;
+    }
+}
+
+.header-value-cell-updating > .artist-cell,
+.header-value-cell-updating > .title-cell,
+.header-value-cell-updating > .label-cell {
+    height: 7vh;
+    min-height: 7vh;
+    width: 27.5vh;
+}
+
+.small-font { 
+    font-size: 3.5vh !important;
+}
+
+.medium-font { 
+    font-size: 3.75vh !important; 
+}
+
+.large-font { 
+    font-size: 5vh !important;
+}
+
+.x-cell i {
+    font-size: 2vh;
+    min-height: 2.5vw;
+    position: absolute;
+    top: 2vh;
+    right: 2vh;
+}
+
+// INFO /////////////////////////////////////////////////////////////////////////////
+.details-row {
+    height: auto;
+}
+
+.fa-pencil {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.fa-pencil:hover {
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.fa-pencil:active {
+    color: blue;
+}
+
+.info-container {
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    font-size: 2vh;
+    padding: 4vh 2vh !important;
+}
+
+.format-row,
+.speed-row,
+.type-length-row,
+.catalog-row,
+.grade-row,
+.price-row,
+.quantity-row,
+.country-row,
+.year-row,
+.package-row,
+.genre-row {
+    height: 8.5vh;
+}
+
+.format-row,
+.speed-row,
+.type-length-row,
+.catalog-row,
+.grade-row,
+.price-row,
+.quantity-row,
+.country-row,
+.year-row,
+.package-row,
+.genre-row,
+.details-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    .inner-value-cell {
+        padding-left: 1vh;
+    
+        .inner-label {
+            font-style: italic;
+        }
+    
+        .inner-value {
+            font-style: normal;
+        }
+    }
+
+    .label-cell {
+        font-weight: bold;
+        min-width: 10vh;
+    }
+
+    .padding-cell {
+        min-width: 2vh;
+    }
+
+    .update-cell {
+        min-width: 1.5vh;
+        padding: 0 1vh;
+    }
+
+    .details-value-cell, .details-value-cell-updating {
+        flex: 1;
+
+        .details-list-container {
+            padding: 0;
+        }
+    }
+
+    .value-cell {
+        align-items: center;
+        background: linear-gradient(to bottom, rgb(212, 238, 255) 5%, rgb(234, 245, 220));
+        display: flex;
+        flex: 1;
+        margin: 0 0 2.1vh 0;
+    }
+
+    .value-cell-updating {
+        background: none !important;
+        margin: 0;
+    }
+
+    .value-cell-updating > .format-cell,
+    .value-cell-updating > .subformat-cell,
+    .value-cell-updating > .type-cell,
+    .value-cell-updating > .length-cell,
+    .value-cell-updating > .media-grade-cell,
+    .value-cell-updating > .sleeve-grade-cell,
+    .value-cell-updating > .genre-cell,
+    .value-cell-updating > .subgenre-cell {
+        width: 20.5vh;
+    }
+
+    .value-cell-updating > .speed-cell,
+    .value-cell-updating > .catalog-cell,
+    .value-cell-updating > .price-cell,
+    .value-cell-updating > .quantity-cell,
+    .value-cell-updating > .country-cell,
+    .value-cell-updating > .year-cell,
+    .value-cell-updating > .package-cell,
+    .details-value-cell-updating > .details-cell {
         width: 100%;
     }
 
-    .album-cover-container {
-        margin: 8% 2% 18% 1%;
-        width: 100%;
+    .details-list-container {
+        margin-left: 2vh;
+    }
+
+    .sub-details-list {
+        margin-left: 2vh;
+    }
+
+    .subformat-cell,
+    .length-cell,
+    .sleeve-grade-cell, 
+    .subgenre-cell {
+        flex: 1;
+    }
+}
+
+.update-value-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+// PREVIOUS-NEXT /////////////////////////////////////////////////////////////////////////
+.previous-item, .next-item {
+    display: flex;
+    flex-direction: column;
+    font-size: 7.5vh;
+
+    i {
+        position: sticky;
+        top: 30vh;
+        translate: translateY(-30vh);;
+    }
+
+    .fa-caret-left, .fa-caret-right {
+        opacity: 1.0;
+        transition: opacity 0.3s ease;
+    }
+
+    .fa-caret-left {
+        padding-right: 0.5vh;
+    }
+
+    .fa-caret-right {
+        padding-left: 0.5vh;
+    }
+
+    .fa-solid:hover {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 799px) {
+    .update-cell {
+        min-width: 1.5vw;
+    }
+
+    .value-cell-updating {
+        width: 16vw;
+    }
+}
+
+@media (max-width: 599px) {
+// MAIN /////////////////////////////////////////////////////////////////////////////
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: middle;
     }
     
-    .album-cover-container img {
-        border: 1px solid black;
-        height: auto;
-        width: 97.5%;
+    .main-container {
+        min-width: 100%;
     }
 
-    .album-details-container {
-        flex-direction: column;
+// FOOTER /////////////////////////////////////////////////////////////////////////////
+    .button-container > button {
+        font-size: 3.25vw;
+        padding: 1.5vw;
     }
 
-    .fa-caret-left, .fa-caret-right {
-        font-size: 4rem;
+    .footer-cart .fa-cart-shopping {
+        margin-left: 1.25vw;
+    }
+    
+    .footer-cart i {
+        font-size: 3.25vw;
+        padding: 1.5vw;
+    }
+    
+    .footer-container {
+        height: 15.75vw;
+        padding: 3.75vw;
+    }
+
+    .footer-price {
+        font-size: 7.75vw;
+    }
+    
+    .footer-cart {
+        font-size: 3.25vw;
+    }
+
+// HEADER /////////////////////////////////////////////////////////////////////////////
+    .header-container {
+        padding: 2.5vw;
+    }
+
+    .header-label {
+        font-size: 3.25vw;
+    }
+
+    .header-artist h1 a {
+        font-size: 6.5vw !important;
+    }
+    
+    .header-padding-cell {
+        width: 2.5vw;
+    }
+    
+    .header-title {
+        font-size: 2.6vw;
+    }
+
+    .header-update-cell i {
+        font-size: 2.75vw;
+        padding-right: 1.35vw;
+    }
+
+    .header-value-cell-updating > .artist-cell,
+    .header-value-cell-updating > .title-cell,
+    .header-value-cell-updating > .label-cell {
+        height: 9.75vw;
+        width: 37.5vw;
+    }
+
+    .x-cell i {
+        font-size: 2.75vw;
+    }
+
+// INFO /////////////////////////////////////////////////////////////////////////////
+.details-row {
+    margin-bottom: 5vw;
+}
+
+.info-container {
+    font-size: 2.75vw;
+    padding: 5vw 2.75vw 0 2.75vw !important;
+}
+
+.format-row,
+.speed-row,
+.type-length-row,
+.catalog-row,
+.grade-row,
+.price-row,
+.quantity-row,
+.country-row,
+.year-row,
+.package-row,
+.genre-row,
+.details-row {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+
+    .label-cell{
+        height: 4.5vh;
+    }
+
+    .update-cell, .value-cell {
+        height: 7vh;
+        margin: 0;
+    }
+
+    .value-cell, .details-value-cell,
+    .value-cell-updating, .details-value-cell-updating {
+        margin-bottom: 1.5vh;
+        width: 45vw;
+    }
+
+    .value-cell-updating > .format-cell,
+    .value-cell-updating > .subformat-cell,
+    .value-cell-updating > .type-cell,
+    .value-cell-updating > .length-cell,
+    .value-cell-updating > .media-grade-cell,
+    .value-cell-updating > .sleeve-grade-cell,
+    .value-cell-updating > .genre-cell,
+    .value-cell-updating > .subgenre-cell,
+    .value-cell-updating > .speed-cell,
+    .value-cell-updating > .catalog-cell,
+    .value-cell-updating > .price-cell,
+    .value-cell-updating > .quantity-cell,
+    .value-cell-updating > .country-cell,
+    .value-cell-updating > .year-cell,
+    .value-cell-updating > .package-cell,
+    .details-value-cell-updating > .details-cell {
+        width: 100%;
     }
 }
 
-@media (max-width: 650px) {
-    .fa-caret-left, .fa-caret-right {
-        font-size: 2.5rem;
+// PREVIOUS-NEXT /////////////////////////////////////////////////////////////////////////////
+    .previous-item, .next-item {
+        font-size: 9.75vw;
+
+        i {
+            top: 39vw;
+        }
     }
 }

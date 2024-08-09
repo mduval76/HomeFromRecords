@@ -61,6 +61,10 @@ export class SharedService {
     this.priceSortCriteria.next(criteria);
   }
 
+  setRefreshNeeded() {
+    this.refreshNeeded.next(true);
+  }
+
   setSearchQuery(query: string) {
     this.searchQuery.next(query);
   }
