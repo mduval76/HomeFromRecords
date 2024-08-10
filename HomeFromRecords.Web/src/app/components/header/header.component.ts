@@ -53,13 +53,13 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  @HostListener('window:resize')
   onClear() {
     if (this.searchQuery.length === 0) {
       this.sharedService.setSearchQuery('');
     }
   }
 
+  @HostListener('window:resize')
   onResize() {
     if (this.trigger && this.trigger.menuOpen) {
       this.trigger.closeMenu();
@@ -67,6 +67,10 @@ export class HeaderComponent implements OnInit {
   }
 
   onSearch(query: string) {
+    if (query.length === 0) {
+      return;
+    }
+    
     this.sharedService.setSearchQuery(query);
     this.router.navigate(['/catalog']);
   }

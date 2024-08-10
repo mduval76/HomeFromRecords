@@ -9,7 +9,6 @@ export class SharedService {
   private formatSortCriteria = new BehaviorSubject<number>(666);
   private mainSortCriteria = new BehaviorSubject<string>('Artist');
   private priceSortCriteria = new BehaviorSubject<string>('none');
-  private searchAndSortCriteria = new BehaviorSubject<{ searchQuery: string, sortCriteria: any }>({ searchQuery: '', sortCriteria: null });
   private searchQuery = new BehaviorSubject<string>('');
   private refreshNeeded = new BehaviorSubject<boolean>(false);
 
@@ -34,10 +33,6 @@ export class SharedService {
 
   getRefreshNeeded() {
     return this.refreshNeeded.asObservable();
-  }
-
-  getSearchAndSortCriteria() {
-    return this.searchAndSortCriteria.asObservable();
   }
 
   getSearchQuery() {

@@ -31,23 +31,28 @@ export class AuthService {
 
   setUserRoleFromToken(): void {
     const token = localStorage.getItem('token');
+
     if (token && !this.isTokenExpired()) {
       try {
         const decodedToken = jwtDecode<DecodedToken>(token);
         const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
         this.userRoleSubject.next(role);
-      } catch (error) {
+      } 
+      catch (error) {
         console.error('Error decoding token', error);
         this.userRoleSubject.next(null);
       }
-    } else {
+    } 
+    else {
       this.userRoleSubject.next(null);
     }
   }
 
   isTokenExpired(): boolean {
     const token = localStorage.getItem('token');
-    if (!token) return true;
+
+    if (!token)
+      return true;
   
     const decodedToken = jwtDecode<DecodedToken>(token);
     const currentTime = Math.floor(Date.now() / 1000);
@@ -57,7 +62,8 @@ export class AuthService {
   updateUserRole(token: string | null): void {
     if (token) {
       localStorage.setItem('token', token);
-    } else {
+    } 
+    else {
       localStorage.removeItem('token');
     }
   }
@@ -82,7 +88,8 @@ export class AuthService {
           return throwError(() => new Error('Logout failed: ' + (error.error?.message || error.message)));
         })
       );
-    } else {
+    } 
+    else {
       this.clearUserRole();
       return throwError(() => new Error('No user session to log out'));
     }
