@@ -52,8 +52,8 @@ export class SidebarComponent implements OnInit {
 
   setMainSortCriteria(mainCriteria: string) {
     if (mainCriteria === 'Reset') {
-      this.sharedService.resetSearchQuery();
       this.resetSortCriteria();
+      this.sharedService.resetSearchQuery();
     }
     else {
       this.sharedService.setMainSortCriteria(mainCriteria);
@@ -101,14 +101,14 @@ export class SidebarComponent implements OnInit {
   }
 
   resetSortCriteria() {
+    this.setFormatSortCriteria(666);
+
     this.alphaAscendingActive = true;
     this.alphaDescendingActive = false;
+    this.setAlphaSortCriteria('ascending');
+
     this.priceAscendingActive = false;
     this.priceDescendingActive = false;
-    this.activeFormat = 666;
-    this.sharedService.setAlphaSortCriteria('ascending');
-    this.sharedService.setPriceSortCriteria('none');
+    this.setPriceSortCriteria('none');
   }
-
-  
 }
