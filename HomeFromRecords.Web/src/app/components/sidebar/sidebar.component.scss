@@ -39,6 +39,11 @@
     font-size: 2rem;
 }
 
+.icon-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .toggle-btn {
     background-color: transparent;
     border: none;

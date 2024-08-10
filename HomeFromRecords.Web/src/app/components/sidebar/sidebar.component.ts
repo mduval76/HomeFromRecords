@@ -21,11 +21,14 @@ import { Subscription } from 'rxjs';
 })
 export class SidebarComponent implements OnInit {
   @ViewChild('drawer') drawer!: MatSidenav;
-
-  isOpened = false;
+  activeFormat: number = 666;
+  alphaAscendingActive: boolean = true;
+  alphaDescendingActive: boolean = false;
+  priceAscendingActive: boolean = false;
+  priceDescendingActive: boolean = false;
+  isOpened: boolean = false;
   displayComponentActive: boolean = false;
   mainCriteria: string = 'Artist';
-  currentSearchQuery: string = '';
 
   private subscriptions: Subscription = new Subscription();
   
@@ -50,28 +53,60 @@ export class SidebarComponent implements OnInit {
   setMainSortCriteria(mainCriteria: string) {
     if (mainCriteria === 'Reset') {
       this.sharedService.resetSearchQuery();
+      this.resetSortCriteria();
     }
     else {
       this.sharedService.setMainSortCriteria(mainCriteria);
       this.mainCriteria = mainCriteria;
     }
-
   }
 
   setAlphaSortCriteria(alphaCriteria: string) {
+    if (alphaCriteria === 'ascending') {
+      this.alphaAscendingActive = true;
+      this.alphaDescendingActive = false;
+    } 
+    else if (alphaCriteria === 'descending') {
+      this.alphaAscendingActive = false;
+      this.alphaDescendingActive = true;
+    }
+
     this.sharedService.setAlphaSortCriteria(alphaCriteria);
   }
 
   setPriceSortCriteria(priceCriteria: string) {
-    this.sharedService.setPriceSortCriteria(priceCriteria);
+    if (priceCriteria === 'ascending') {
+      this.priceAscendingActive = !this.priceAscendingActive;
+      if (this.priceDescendingActive) {
+        this.priceDescendingActive = false;
+      }
+    } 
+    else if (priceCriteria === 'descending') {
+      this.priceDescendingActive = !this.priceDescendingActive;
+      if (this.priceAscendingActive) {
+        this.priceAscendingActive = false;
+      }
+    }
+
+    if (!this.priceAscendingActive && !this.priceDescendingActive) {
+      this.sharedService.setPriceSortCriteria('none');
+    } else {
+      this.sharedService.setPriceSortCriteria(priceCriteria);
+    }
   }
 
-  setFormatSortCriteria(format: number) {
-    this.sharedService.setFormatSortCriteria(format);
-    this.resetPriceSortCriteria();
+  setFormatSortCriteria(formatCriteria: number) {
+    this.activeFormat = formatCriteria;
+    this.sharedService.setFormatSortCriteria(this.activeFormat);
   }
 
-  resetPriceSortCriteria() {
+  resetSortCriteria() {
+    this.alphaAscendingActive = true;
+    this.alphaDescendingActive = false;
+    this.priceAscendingActive = false;
+    this.priceDescendingActive = false;
+    this.activeFormat = 666;
+    this.sharedService.setAlphaSortCriteria('ascending');
     this.sharedService.setPriceSortCriteria('none');
   }
 

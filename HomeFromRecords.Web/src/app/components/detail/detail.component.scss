@@ -541,11 +541,12 @@
 
     .update-cell, .value-cell {
         height: 7vh;
-        margin: 0;
+        margin-top: 1.5vh;
     }
 
     .value-cell, .details-value-cell,
     .value-cell-updating, .details-value-cell-updating {
+        height: 7vh;
         margin-bottom: 1.5vh;
         width: 45vw;
     }
