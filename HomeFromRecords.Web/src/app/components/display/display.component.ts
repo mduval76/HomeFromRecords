@@ -342,6 +342,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   searchForArtist(artistName: string): void {
     this.sharedService.setSearchQuery(artistName);
+    this.currentSearchQuery = this.getFormattedArtistName(artistName);
   }  
   
   searchForRecordLabel(recordLabel: string): void {

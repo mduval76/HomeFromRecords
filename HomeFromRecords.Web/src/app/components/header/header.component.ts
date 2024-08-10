@@ -7,6 +7,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { FormatService } from '../../services/format/format.service';
 import { OrderService } from '../../services/order/order.service';
 import { SharedService } from '../../services/shared/shared.service';
 
@@ -32,6 +33,7 @@ export class HeaderComponent implements OnInit {
   
   constructor(
     public authService: AuthService,
+    public formatService: FormatService,
     public orderService: OrderService,
     private sharedService: SharedService,
     private router: Router

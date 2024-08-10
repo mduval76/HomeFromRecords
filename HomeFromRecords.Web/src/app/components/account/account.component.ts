@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api/api.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { SharedService } from '../../services/shared/shared.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { jwtDecode } from 'jwt-decode';
@@ -41,6 +42,7 @@ export class AccountComponent implements OnInit{
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
+    private sharedService: SharedService,
     private fb: FormBuilder,
     private sb: MatSnackBar,
     private router: Router) {}
@@ -67,6 +69,7 @@ export class AccountComponent implements OnInit{
       });
       
       let requestObservable: Observable<any>;
+
       if (this.isLogin) {
           requestObservable = this.apiService.postData(`${environment.apiUrl}User/login`, formData);
           console.log('LOGIN api');
@@ -92,20 +95,26 @@ export class AccountComponent implements OnInit{
               this.userId = response.userId;
               this.sb.open('Initial Admin Login Detected', 'Close', { duration: 3000 });
               this.switchForm();
-            } else {
+            } 
+            else {
               if (userRole === 'Admin') {
                 this.router.navigate(['/new-item-form']);
-              } else {
+              } 
+              else {
                 this.router.navigate(['/catalog']);
               }
+
+              this.sharedService.resetSearchQuery();
               this.sb.open('Login successful', 'Close', { duration: 3000 });
               this.isAdminLogin = false;
             }
-          } else if (this.isAdminLogin) { 
+          } 
+          else if (this.isAdminLogin) { 
             this.isAdminLogin = false;
             this.sb.open('Update successful', 'Close', { duration: 3000 });
             this.switchForm();
-          } else { 
+          } 
+          else { 
             this.sb.open('Registration successful', 'Close', { duration: 3000 });
             this.switchForm();
           }
@@ -176,7 +185,6 @@ export class AccountComponent implements OnInit{
 
   onKeypressEvent(event: any){
     console.log(event.target.value);
- 
  }
 
   private capitalizeFirstLetter(string: string): string {
@@ -192,9 +200,11 @@ export class AccountComponent implements OnInit{
     if (this.form.get('UserName')?.hasError('required')) {
       return 'Username is required';
     }
+
     if (this.form.get('UserName')?.hasError('username')) {
       return 'Not a valid Username';
     }
+
     return '';
   }
 
@@ -205,6 +215,7 @@ export class AccountComponent implements OnInit{
     if (this.form.get('Email')?.hasError('email')) {
       return 'Not a valid email';
     }
+
     return '';
   }
 
@@ -220,6 +231,7 @@ export class AccountComponent implements OnInit{
     if (pwdControl?.hasError('pattern')) {
       return 'Password must include a non-alphanumeric character';
     }
+
     return '';
   }
 }
