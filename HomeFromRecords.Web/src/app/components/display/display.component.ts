@@ -113,7 +113,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
     this.apiService.getData(url).subscribe({
       next: (response) => {
         this.totalItems = response.length;
-        console.log('Total items:', this.totalItems);
         let sortedData = response.items;
         this.pageService.setTotalItems(this.totalItems);
         this.pageService.setSurroundingPages();
@@ -141,6 +140,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
         this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
         this.pageService.setCurrentData(this.data);
+        this.pageService.changePage(this.currentPage);
         this.isLoading = false;
       },
       error: (error) => {

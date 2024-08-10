@@ -1,10 +1,12 @@
 <mat-drawer-container class="sidebar-container">
   <mat-drawer #drawer class="sidebar" mode="side" (openedChange)="isOpened = drawer.opened">
-    <button mat-button [matMenuTriggerFor]="menu">Sorting by {{mainCriteria}}</button>
+    <div class="sidebar-elements">
+      <button mat-button (click)="setMainSortCriteria('Reset')">Reset All</button>
+      <button mat-button [matMenuTriggerFor]="menu">Sorting by {{mainCriteria}}</button>
+    </div>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="setMainSortCriteria('Artist')">Artist</button>
       <button mat-menu-item (click)="setMainSortCriteria('Album')">Album</button>
-      <button mat-menu-item (click)="setMainSortCriteria('Reset')">Reset</button>
     </mat-menu>
     <div class="icon-container">
       <div class="format-section">

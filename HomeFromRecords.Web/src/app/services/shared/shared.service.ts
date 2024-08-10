@@ -72,6 +72,7 @@ export class SharedService {
   // Methods -------------------------------------------------------------- 
   resetSearchQuery() {
     this.searchQuery.next('');
+    this.notifyDataRefreshNeeded();
   }
 
   notifyDataRefreshNeeded() {

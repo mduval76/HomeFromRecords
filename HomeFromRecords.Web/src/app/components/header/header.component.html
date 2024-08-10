@@ -2,7 +2,7 @@
   <img src="./assets/images/logos/logo.png" alt="logo" routerLink="/home" class="header-logo">
   <div class="searchbar-menu-container">
       <div class="searchbar-container">
-          <input class="searchbar-input" id="query" name="query" type="text" [(ngModel)]="searchQuery" placeholder="Search" (keyup.enter)="onSearch(searchQuery)"/>
+          <input class="searchbar-input" id="query" name="query" type="text" [(ngModel)]="searchQuery" placeholder="Search" (keyup.enter)="onSearch(searchQuery)" (keyup.backspace)="onClear()"/>
           <button class="searchbar-button" (click)="onSearch(searchQuery)">
               <i class="fa-solid fa-magnifying-glass"></i>
           </button>

@@ -4,6 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { PageService } from '../../services/page/page.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { Subscription } from 'rxjs';
 
@@ -32,7 +33,7 @@ export class SidebarComponent implements OnInit {
 
   private subscriptions: Subscription = new Subscription();
   
-  constructor(private sharedService: SharedService, private router: Router) {}
+  constructor(private sharedService: SharedService, private pageService: PageService, private router: Router) {}
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -52,8 +53,9 @@ export class SidebarComponent implements OnInit {
 
   setMainSortCriteria(mainCriteria: string) {
     if (mainCriteria === 'Reset') {
+      this.mainCriteria = 'Artist';
+      this.sharedService.setMainSortCriteria(this.mainCriteria);
       this.resetSortCriteria();
-      this.sharedService.resetSearchQuery();
     }
     else {
       this.sharedService.setMainSortCriteria(mainCriteria);
@@ -110,5 +112,8 @@ export class SidebarComponent implements OnInit {
     this.priceAscendingActive = false;
     this.priceDescendingActive = false;
     this.setPriceSortCriteria('none');
+
+    this.sharedService.resetSearchQuery();
+    this.pageService.changePage(1);
   }
 }

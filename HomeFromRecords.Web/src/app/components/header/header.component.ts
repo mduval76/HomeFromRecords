@@ -52,6 +52,12 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('window:resize')
+  onClear() {
+    if (this.searchQuery.length === 0) {
+      this.sharedService.setSearchQuery('');
+    }
+  }
+
   onResize() {
     if (this.trigger && this.trigger.menuOpen) {
       this.trigger.closeMenu();
