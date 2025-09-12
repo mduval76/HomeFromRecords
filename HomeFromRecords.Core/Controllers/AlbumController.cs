@@ -16,15 +16,17 @@ namespace HomeFromRecords.Core.Controllers {
         private readonly IRecordLabel _recordLabelRepos;
         private readonly IConfiguration _config;
         private readonly string _targetFolderPath;
-        private readonly string _baseUrl;
+        private readonly string? _baseUrl;
+        private readonly ILogger<AlbumController> _logger;
 
-        public AlbumController(IAlbum albumRepos, IArtist artistRepos, IRecordLabel recordLabelRepos, IWebHostEnvironment env, IConfiguration config) {
+        public AlbumController(IAlbum albumRepos, IArtist artistRepos, IRecordLabel recordLabelRepos, IWebHostEnvironment env, IConfiguration config, ILogger<AlbumController> logger) {
             _albumRepos = albumRepos;
             _targetFolderPath = Path.Combine(env.ContentRootPath, "Uploads", "Images", "AlbumCovers");
             _artistRepos = artistRepos;
             _recordLabelRepos = recordLabelRepos;
             _config = config;
-            _baseUrl = _config.GetValue<string>("AppSettings:BaseUrl");
+            _baseUrl = _config.GetValue<string>("AppSettings:BaseUrl")!;
+            _logger = logger;
         }
 
         [HttpGet("id")]
@@ -173,6 +175,7 @@ namespace HomeFromRecords.Core.Controllers {
                 return Ok((new { message = "Album and image uploaded successfully" }));
             }
             catch (Exception ex) {
+                _logger.LogError(ex, "Error adding album");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error adding album");
             }
         }
@@ -189,9 +192,8 @@ namespace HomeFromRecords.Core.Controllers {
                 fileName = Path.GetFileName(file.FileName);
                 var filePath = Path.Combine(_targetFolderPath, fileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create)) {
-                    await file.CopyToAsync(stream);
-                }
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
             }
 
             if (!string.IsNullOrEmpty(albumUpdateDto.ImgFileExt) && existingAlbum.ImgFileExt != albumUpdateDto.ImgFileExt) {

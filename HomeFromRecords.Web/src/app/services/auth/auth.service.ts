@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment.development';
 import { catchError, map } from 'rxjs/operators';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
 interface DecodedToken {
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;

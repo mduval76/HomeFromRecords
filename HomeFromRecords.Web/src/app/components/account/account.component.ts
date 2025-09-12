@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
 interface DecodedToken {
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;

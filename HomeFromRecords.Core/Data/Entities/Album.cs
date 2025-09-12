@@ -3,10 +3,10 @@
 namespace HomeFromRecords.Core.Data.Entities {
     public class Album {
         public Guid AlbumId { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
         public float Price { get; set; }
         public int Quantity { get; set; }
-        public string Country { get; set; }
+        public string Country { get; set; } = null!;
         public string ReleaseYear { get; set; } = "Unknown";
         public string CatalogNumber { get; set; } = string.Empty;
         public string MatrixNumber { get; set; } = string.Empty;
@@ -14,10 +14,10 @@ namespace HomeFromRecords.Core.Data.Entities {
         public string Details { get; set; } = string.Empty;
 
         public Guid ArtistId { get; set; }
-        public Artist Artist { get; set; }
+        public Artist Artist { get; set; } = null!;
 
         public Guid RecordLabelId { get; set; }
-        public RecordLabel RecordLabel { get; set; }
+        public RecordLabel RecordLabel { get; set; } = null!;
 
         public Grade MediaGrade { get; set; } = Grade.UNSPECIFIED;
         public Grade SleeveGrade { get; set; } = Grade.UNSPECIFIED;

@@ -5,9 +5,9 @@ using static HomeFromRecords.Core.Data.Constants;
 
 namespace HomeFromRecords.Core.Interfaces {
     public interface IAlbum {
-        Task<Album> GetAlbumByIdAsync(Guid albumId);
-        Task<Album> GetAlbumByTitleAsync(string title);
-        Task<Album> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country);
+        Task<Album?> GetAlbumByIdAsync(Guid albumId);
+        Task<Album?> GetAlbumByTitleAsync(string title);
+        Task<Album?> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country);
         Task<IEnumerable<Album>> GetAllAlbumsAsync();
         Task<IEnumerable<Album>> GetAlbumsByArtistIdAsync(Guid artistId, int? albumFormat = null);
         Task<IEnumerable<Album>> GetAlbumsByCountryAsync(string country);
@@ -25,7 +25,7 @@ namespace HomeFromRecords.Core.Interfaces {
 
         // CRUD
         Task CreateAlbumAsync(Album album);
-        Task<Album> UpdateAlbumAsync(Guid albumId, AlbumUpdateDto updateData);
-        Task<Album> DeleteAlbumAsync(Guid albumId);
+        Task<Album?> UpdateAlbumAsync(Guid albumId, AlbumUpdateDto updateData);
+        Task<Album?> DeleteAlbumAsync(Guid albumId);
     }
 }

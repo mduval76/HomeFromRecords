@@ -3,61 +3,62 @@ using HomeFromRecords.Core.Data.Entities;
 using HomeFromRecords.Core.Dtos;
 using HomeFromRecords.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 using static HomeFromRecords.Core.Data.Constants;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HomeFromRecords.Core.Repositories {
-    public class AlbumRepos : IAlbum {
-        private readonly HomeFromRecordsContext _context;
-        private readonly ILogger<AlbumRepos> _logger;
-        private readonly Random _random = new Random();
-
-        public AlbumRepos(HomeFromRecordsContext context, ILogger<AlbumRepos> logger) {
-            _context = context;
-            _logger = logger;
-        }
+    public class AlbumRepos(HomeFromRecordsContext context, ILogger<AlbumRepos> logger) : IAlbum {
+        private readonly HomeFromRecordsContext _context = context;
+        private readonly ILogger<AlbumRepos> _logger = logger;
+        private readonly Random _random = new();
+        private static readonly char[] separator = [' '];
 
         public async Task<Album?> GetAlbumByIdAsync(Guid albumId) {
             try {
                 return await _context.Albums
                     .Where(a => a.AlbumId == albumId).FirstOrDefaultAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving album by id");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums for AlbumId : {AlbumId}", albumId);
+                throw new Exception("An error occurred while retrieving album by ID.");
             }
         }
 
         public async Task<Album?> GetAlbumByTitleAsync(string title) {
             try {
                 return await _context.Albums
-                    .Where(a => a.Title.ToLower() == title.ToLower()).FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(a => a.Title == title);
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving album by title");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving album by Title : {Title}", title);
+                throw new Exception("An error occurred while retrieving album by title.");
             }
         }
 
-        public async Task<Album> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country) {
+        public async Task<Album?> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country) {
             try {
-                var artist = await _context.Artists
-                    .Where(a => a.ArtistName.ToLower() == artistName.ToLower())
-                    .FirstOrDefaultAsync();
+               var artist = await _context.Artists
+                    .FirstOrDefaultAsync(a => a.ArtistName == artistName);
 
                 var label = await _context.RecordLabels
-                    .Where(r => r.RecordLabelName.ToLower() == labelName.ToLower())
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(r => r.RecordLabelName == labelName);
 
-                if (artist != null) {
-                    var album = await _context.Albums
-                        .Where(a => a.ArtistId == artist.ArtistId && a.Title.ToLower() == title.ToLower() && a.RecordLabelId == label!.RecordLabelId && a.Format == mainFormat && a.Country == country)
-                        .FirstOrDefaultAsync();
-
-                    return album;
+                if (artist != null && label != null) {
+                    return await _context.Albums
+                        .FirstOrDefaultAsync(a =>
+                            a.ArtistId == artist.ArtistId &&
+                            a.Title == title &&
+                            a.RecordLabelId == label.RecordLabelId &&
+                            a.Format == mainFormat &&
+                            a.Country == country);
                 }
 
                 return null;
             }
             catch (Exception ex) {
-                throw new Exception("An error occurred while checking for doubles", ex);
+                _logger.LogError(ex, "Unexpected error occured while checking for doubles.");
+                throw new Exception("An error occurred while checking for doubles.");
             }
         }
 
@@ -65,8 +66,9 @@ namespace HomeFromRecords.Core.Repositories {
             try {
                 return await _context.Albums.ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving the first page's worth of albums");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving store catalog.");
+                throw new Exception("An error occurred retrieving store catalog.");
             }
         }
 
@@ -81,18 +83,21 @@ namespace HomeFromRecords.Core.Repositories {
 
                 return await albums.ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by artist");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums for ArtistId : {ArtistId}", artistId);
+                throw new Exception("An error occurred retrieving albums by artist ID.");
             }
         }
 
         public async Task<IEnumerable<Album>> GetAlbumsByCountryAsync(string country) {
             try {
                 return await _context.Albums
-                    .Where(a => a.Country.ToLower() == country.ToLower()).ToListAsync();
+                    .Where(a => a.Country == country)
+                    .ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by country");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by Country : {Country}", country);
+                throw new Exception("An error occurred retrieving albums by country.");
             }
         }
 
@@ -101,8 +106,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.RecordLabelId == labelId).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by record label");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by RecordLabelId : {RecordLabelId}", labelId);
+                throw new Exception("An error occurred retrieving albums by record label ID.");
             }
         }
 
@@ -111,8 +117,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.Format == mainFormat).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by main format");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by MainFormat : {Format}", mainFormat);
+                throw new Exception("An error occurred retrieving albums by main format.");
             }
         }
 
@@ -121,8 +128,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.SubFormat == subFormat).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by sub format");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by SubFormat : {SubFormat}", subFormat);
+                throw new Exception("An error occurred retrieving albums by sub format.");
             }
         }
 
@@ -131,8 +139,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.MediaGrade == grade || a.SleeveGrade == grade).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by grade");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by MediaGrade : {MediaGrade}", grade);
+                throw new Exception("An error occurred retrieving albums by media grade.");
             }
         }
 
@@ -150,8 +159,9 @@ namespace HomeFromRecords.Core.Repositories {
 
                 return albumsInGenre;
             }
-            catch (Exception) {
-                throw new Exception("An error occurred while retrieving albums by artist genre");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by ArtistGenre : {ArtistGenre}", artistGenre);
+                throw new Exception("An error occurred retrieving albums by artist genre.");
             }
         }
 
@@ -160,8 +170,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.AlbumGenre == albumGenre).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by album genre");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by AlbumGenre : {AlbumGenre}", albumGenre);
+                throw new Exception("An error occurred retrieving albums by album genre.");
             }
         }
 
@@ -170,8 +181,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.AlbumLength == albumLength).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by album length");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by AlbumLength : {AlbumLength}", albumLength);
+                throw new Exception("An error occurred retrieving albums by album length.");
             }
         }
 
@@ -180,8 +192,9 @@ namespace HomeFromRecords.Core.Repositories {
                 return await _context.Albums
                     .Where(a => a.AlbumType == albumType).ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by album type");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by AlbumType : {AlbumType}", albumType);
+                throw new Exception("An error occurred retrieving albums by album type.");
             }
         }
 
@@ -191,25 +204,26 @@ namespace HomeFromRecords.Core.Repositories {
                     .Where(a => a.Format == mainFormat && (a.MediaGrade == grade))
                     .ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving albums by format and grade");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving albums by MainFormat : {Format} and MediaGrade : {MediaGrade}", mainFormat, grade);
+                throw new Exception("An error occurred retrieving albums by main format and media grade.");
             }
         }
 
         public async Task<IEnumerable<Album>> GetSearchAlbumsAsync(string query, int? albumFormat = null) {
             try {
-                var lowerQuery = query.ToLower();
                 var normalizedQuery = NormalizeQuery(query);
 
                 var albumsQuery = _context.Albums
                     .Include(a => a.Artist)
                     .Include(a => a.RecordLabel)
-                    .Where(a => a.Title.ToLower().Contains(lowerQuery) ||
-                                a.Details.ToLower().Contains(lowerQuery) ||
-                                (a.Artist != null &&
-                                 (a.Artist.ArtistName.ToLower().Contains(lowerQuery) ||
-                                  a.Artist.ArtistName.ToLower().Contains(normalizedQuery))) ||
-                                (a.RecordLabel != null && a.RecordLabel.RecordLabelName.ToLower().Contains(lowerQuery)));
+                    .Where(a =>
+                        EF.Functions.Like(a.Title, $"%{query}%") ||
+                        EF.Functions.Like(a.Details, $"%{query}%") ||
+                        (a.Artist != null &&
+                         (EF.Functions.Like(a.Artist.ArtistName, $"%{query}%") ||
+                          EF.Functions.Like(a.Artist.ArtistName, $"%{normalizedQuery}%"))) ||
+                        (a.RecordLabel != null && EF.Functions.Like(a.RecordLabel.RecordLabelName, $"%{query}%")));
 
                 if (albumFormat.HasValue) {
                     albumsQuery = albumsQuery.Where(a => a.Format == (MainFormat)albumFormat.Value);
@@ -217,8 +231,9 @@ namespace HomeFromRecords.Core.Repositories {
 
                 return await albumsQuery.ToListAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occurred while retrieving albums by search query");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error during album search for Query: '{Query}', Format: '{Format}'", query, albumFormat?.ToString() ?? "Any");
+                throw new Exception("An error occurred while retrieving albums by search query.");
             }
         }
 
@@ -234,8 +249,9 @@ namespace HomeFromRecords.Core.Repositories {
 
                 return randomAlbums;
             }
-            catch (Exception) {
-                throw new Exception("An error occured while retrieving random albums");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error retrieving a random Album.");
+                throw new Exception("An error occurred retrieving a random album from the store catalog.");
             }
         }
 
@@ -245,12 +261,13 @@ namespace HomeFromRecords.Core.Repositories {
                 _context.Albums.Add(album);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception) {
-                throw new Exception("An error occured while creating a new album");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error creating new entry for Album : {Album} by Artist : {Artist}", album.Title, album.Artist?.ArtistName);
+                throw new Exception("An error occurred while creating a new album entry.");
             }
         }
 
-        public async Task<Album> UpdateAlbumAsync(Guid albumId, AlbumUpdateDto updateData) {
+        public async Task<Album?> UpdateAlbumAsync(Guid albumId, AlbumUpdateDto updateData) {
             try {
                 var album = await _context.Albums.FirstOrDefaultAsync(a => a.AlbumId == albumId);
 
@@ -325,10 +342,12 @@ namespace HomeFromRecords.Core.Repositories {
 
                     await _context.SaveChangesAsync();
                 }
+
                 return album;
             }
-            catch (Exception) {
-                throw new Exception("An error occurred while updating an album");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error updating AlbumId : {AlbumID}", albumId);
+                throw new Exception("An error occurred updating an album.");
             }
         }
 
@@ -346,14 +365,15 @@ namespace HomeFromRecords.Core.Repositories {
                     return null;
                 }
             }
-            catch (Exception) {
-                throw new Exception("An error occured while deleting an album");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Unexpected error deleting AlbumId : {AlbumID}", albumId);
+                throw new Exception("An error occurred deleting an album.");
             }
         }
 
         // Helper methods
-        private string NormalizeQuery(string query) {
-            var parts = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        private static string NormalizeQuery(string query) {
+            var parts = query.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 2) {
                 return $"{parts[1]}, {parts[0]}".ToLower();
             }

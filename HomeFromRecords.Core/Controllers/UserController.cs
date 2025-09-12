@@ -11,24 +11,24 @@ using System.Text;
 namespace HomeFromRecords.Core.Controllers {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        private readonly IConfiguration _configuration;
+    public class UserController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<Guid>> roleManager, IConfiguration configuration) : ControllerBase {
+        private readonly UserManager<User> _userManager = userManager;
+        private readonly SignInManager<User> _signInManager = signInManager;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<Guid>> roleManager, IConfiguration configuration) {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
-        }
+#pragma warning disable IDE0052
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
+#pragma warning restore IDE0052
+
+        private readonly IConfiguration _configuration = configuration;
 
         [HttpGet("profile")]
         [Authorize]
         public async Task<IActionResult> GetUserProfile() {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
 
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 return NotFound();
 
@@ -190,9 +190,9 @@ namespace HomeFromRecords.Core.Controllers {
         // Helper methods
         private async Task<string> GenerateJwtToken(User user) {
             var claims = new List<Claim> {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new(JwtRegisteredClaimNames.Sub, user.Email!),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var roleClaims = await _userManager.GetRolesAsync(user);
@@ -200,7 +200,12 @@ namespace HomeFromRecords.Core.Controllers {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var jwtKey = _configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(jwtKey)) {
+                throw new InvalidOperationException("JWT key is not configured");
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddHours(1);
 
