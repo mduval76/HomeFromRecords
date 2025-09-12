@@ -95,7 +95,7 @@ namespace HomeFromRecords.Core.Controllers {
                 }
             }
 
-            var token = GenerateJwtToken(user);
+            var token = await GenerateJwtToken(user);
 
             return Ok(new {
                 Token = token,
@@ -115,64 +115,71 @@ namespace HomeFromRecords.Core.Controllers {
         [HttpPut("update")]
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromForm] UserUpdateDto userDetails) {
-            Guid userId;
-            if (!Guid.TryParse(userDetails.UserId, out userId)) {
+            if (!Guid.TryParse(userDetails.UserId, out Guid userId)) {
                 return BadRequest("Invalid user ID.");
             }
 
             var user = await _userManager.FindByIdAsync(userId.ToString());
-
-            if (user == null)
+            if (user == null) {
                 return NotFound();
+            }
 
-            if (userDetails.UserName != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.UserName)) {
                 user.UserName = userDetails.UserName;
             }
 
-            if (userDetails.Password != null) {
-                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, userDetails.Password);
-            }
-
-            if (userDetails.FirstName != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.FirstName)) {
                 user.FirstName = userDetails.FirstName;
             }
 
-            if (userDetails.LastName != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.LastName)) {
                 user.LastName = userDetails.LastName;
             }
 
-            if (userDetails.Email != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.Email)) {
                 user.Email = userDetails.Email;
             }
 
-            if (userDetails.Phone != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.Phone)) {
                 user.PhoneNumber = userDetails.Phone;
             }
 
-            if (userDetails.StreetAddress != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.StreetAddress)) {
                 user.StreetAddress = userDetails.StreetAddress;
             }
 
-            if (userDetails.City != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.City)) {
                 user.City = userDetails.City;
             }
 
-            if (userDetails.Region != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.Region)) {
                 user.Region = userDetails.Region;
             }
 
-            if (userDetails.PostalCode != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.PostalCode)) {
                 user.PostalCode = userDetails.PostalCode;
             }
 
-            if (userDetails.Country != null) {
+            if (!string.IsNullOrWhiteSpace(userDetails.Country)) {
                 user.Country = userDetails.Country;
             }
 
-            var result = await _userManager.UpdateAsync(user);
+            if (!string.IsNullOrWhiteSpace(userDetails.Password)) {
+                var removeResult = await _userManager.RemovePasswordAsync(user);
+                if (!removeResult.Succeeded) {
+                    return BadRequest("Failed to reset password.");
+                }
 
-            if (!result.Succeeded)
-                return BadRequest("Failed to update user profile.");
+                var addResult = await _userManager.AddPasswordAsync(user, userDetails.Password);
+                if (!addResult.Succeeded) {
+                    return BadRequest(new { message = "Failed to update password.", errors = addResult.Errors.Select(e => e.Description) });
+                }
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded) {
+                return BadRequest(new { message = "Failed to update user profile.", errors = result.Errors.Select(e => e.Description) });
+            }
 
             return Ok(new {
                 UserDetails = userDetails,
@@ -181,14 +188,14 @@ namespace HomeFromRecords.Core.Controllers {
         }
 
         // Helper methods
-        private string GenerateJwtToken(User user) {
+        private async Task<string> GenerateJwtToken(User user) {
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var roleClaims = _userManager.GetRolesAsync(user).Result;
+            var roleClaims = await _userManager.GetRolesAsync(user);
             foreach (var role in roleClaims) {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
