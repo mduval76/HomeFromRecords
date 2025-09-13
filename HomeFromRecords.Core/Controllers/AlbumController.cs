@@ -1,10 +1,7 @@
 ﻿using HomeFromRecords.Core.Data.Entities;
 using HomeFromRecords.Core.Dtos;
 using HomeFromRecords.Core.Interfaces;
-using HomeFromRecords.Core.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using static HomeFromRecords.Core.Data.Constants;
 
 namespace HomeFromRecords.Core.Controllers {
@@ -29,100 +26,102 @@ namespace HomeFromRecords.Core.Controllers {
             _logger = logger;
         }
 
+        // SINGLE ITEM QUERIES
         [HttpGet("id")]
         public async Task<ActionResult<AlbumDto>> GetAlbumById(Guid albumId) {
-            var albumDto = await _albumRepos.GetAlbumByIdAsync(albumId);
-            return Ok(albumDto);
+            var album = await _albumRepos.GetAlbumByIdAsync(albumId);
+
+            if (album == null) 
+                return NotFound();
+
+            return Ok(await AssignProperties(album));
         }
 
         [HttpGet("title")]
         public async Task<ActionResult<AlbumDto>> GetAlbumByTitle(string title) {
-            var albumDto = await _albumRepos.GetAlbumByTitleAsync(title);
-            return Ok(albumDto);
+            var album = await _albumRepos.GetAlbumByTitleAsync(title);
+
+            if (album == null) 
+                return NotFound();
+
+            return Ok(await AssignProperties(album));
         }
 
+        // PAGINATED COLLECTION QUERIES
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAllAlbums() {
-            var albums = await _albumRepos.GetAllAlbumsAsync();
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAllAlbums(int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAllAlbumsAsync(pageNumber, pageSize);
+
+            if (albums == null)
+                return NotFound();
+
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("artistId")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByArtistId(Guid artistId, int? albumFormat = null) {
-            var albums = await _albumRepos.GetAlbumsByArtistIdAsync(artistId, albumFormat);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByArtistId(Guid artistId, int? albumFormat, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByArtistIdAsync(artistId, albumFormat, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("country")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByCountry(string country) {
-            var albums = await _albumRepos.GetAlbumsByCountryAsync(country);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByCountry(string country, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByCountryAsync(country, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("labelId")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByRecordLabelId(Guid labelId) {
-            var albums = await _albumRepos.GetAlbumsByRecordLabelIdAsync(labelId);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByRecordLabelId(Guid labelId, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByRecordLabelIdAsync(labelId, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("format")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByMainFormat(MainFormat albumFormat) {
-            var albums = await _albumRepos.GetAlbumsByMainFormatAsync(albumFormat);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByMainFormat(MainFormat albumFormat, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByMainFormatAsync(albumFormat, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("artistGenre")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByArtistGenre(ArtistGenre artistGenre) {
-            var albums = await _albumRepos.GetAlbumsByArtistGenreAsync(artistGenre);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByArtistGenre(ArtistGenre artistGenre, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByArtistGenreAsync(artistGenre, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("albumGenre")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByAlbumGenre(AlbumGenre albumGenre) {
-            var albums = await _albumRepos.GetAlbumsByAlbumGenreAsync(albumGenre);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByAlbumGenre(AlbumGenre albumGenre, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByAlbumGenreAsync(albumGenre, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("length")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByAlbumLength(AlbumLength albumLength) {
-            var albums = await _albumRepos.GetAlbumsByAlbumLengthAsync(albumLength);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByAlbumLength(AlbumLength albumLength, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByAlbumLengthAsync(albumLength, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("type")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByAlbumType(AlbumType albumType) {
-            var albums = await _albumRepos.GetAlbumsByAlbumTypeAsync(albumType);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByAlbumType(AlbumType albumType, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByAlbumTypeAsync(albumType, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("formatGrade")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbumsByFormatAndGrade(MainFormat mainFormat, Grade grade) {
-            var albums = await _albumRepos.GetAlbumsByFormatAndGradeAsync(mainFormat, grade);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetAlbumsByFormatAndGrade(MainFormat mainFormat, Grade grade, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetAlbumsByFormatAndGradeAsync(mainFormat, grade, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetSearchAlbums(string query, int? albumFormat = null) {
-            var albums = await _albumRepos.GetSearchAlbumsAsync(query, albumFormat);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetSearchAlbums(string query, int? albumFormat, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetSearchAlbumsAsync(query, albumFormat, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         [HttpGet("random")]
-        public async Task<ActionResult<IEnumerable<AlbumDto>>> GetRandomAlbums(int count) {
-            var albums = await _albumRepos.GetRandomAlbumsAsync(count);
-            var albumDtos = await AssignPropertiesInCollection(albums);
-            return Ok(albumDtos);
+        public async Task<ActionResult<PaginatedResult<AlbumDto>>> GetRandomAlbums(int count, int pageNumber = 1, int pageSize = 12) {
+            var albums = await _albumRepos.GetRandomAlbumsAsync(count, pageNumber, pageSize);
+            return Ok(await AssignPropertiesInCollection(albums));
         }
 
         // CRUD
@@ -216,10 +215,40 @@ namespace HomeFromRecords.Core.Controllers {
             return Ok(deletedAlbum);
         }
 
-        // Helper methods
-        private async Task<IEnumerable<AlbumDto>> AssignPropertiesInCollection(IEnumerable<Album> albums) {
-            var artistIds = albums.Select(a => a.ArtistId).Distinct();
-            var recordLabelIds = albums.Select(a => a.RecordLabelId).Distinct();
+        // HELPERS
+        private async Task<AlbumDto> AssignProperties(Album album) {
+            var artist = await _artistRepos.GetArtistByIdAsync(album.ArtistId);
+            var recordLabel = await _recordLabelRepos.GetRecordLabelByIdAsync(album.RecordLabelId);
+
+            return new AlbumDto(
+                album.AlbumId,
+                album.Title,
+                album.Price,
+                album.Quantity,
+                album.Country,
+                album.ReleaseYear,
+                album.CatalogNumber,
+                album.MatrixNumber,
+                GetImgUrl(album.ImgFileExt),
+                album.Details,
+                artist?.ArtistName ?? string.Empty,
+                recordLabel?.RecordLabelName ?? string.Empty,
+                album.MediaGrade,
+                album.SleeveGrade,
+                album.Format,
+                album.SubFormat,
+                album.PackageType,
+                album.VinylSpeed,
+                artist?.ArtistGenre ?? ArtistGenre.UNSPECIFIED,
+                album.AlbumGenre,
+                album.AlbumLength,
+                album.AlbumType
+            );
+        }
+
+        private async Task<PaginatedResult<AlbumDto>> AssignPropertiesInCollection(PaginatedResult<Album> albums) {
+            var artistIds = albums.Items.Select(a => a.ArtistId).Distinct();
+            var recordLabelIds = albums.Items.Select(a => a.RecordLabelId).Distinct();
 
             var artists = await _artistRepos.GetArtistsByIdsAsync(artistIds);
             var recordLabels = await _recordLabelRepos.GetRecordLabelsByIdsAsync(recordLabelIds);
@@ -227,7 +256,7 @@ namespace HomeFromRecords.Core.Controllers {
             var artistDict = artists.ToDictionary(a => a.ArtistId, a => a);
             var recordLabelDict = recordLabels.ToDictionary(r => r.RecordLabelId, r => r);
 
-            var albumDtos = albums.Select(album => {
+            var albumDtos = albums.Items.Select(album => {
                 var artist = artistDict[album.ArtistId];
                 var recordLabel = recordLabelDict[album.RecordLabelId];
                 return new AlbumDto(
@@ -256,7 +285,12 @@ namespace HomeFromRecords.Core.Controllers {
                 );
             }).ToList();
 
-            return albumDtos;
+            return new PaginatedResult<AlbumDto>(
+                albumDtos,
+                albums.TotalItems,
+                albums.CurrentPage,
+                albums.ItemsPerPage
+            );
         }
 
         private async Task<Artist> CheckExistingArtist(AlbumDto albumSubmit) {

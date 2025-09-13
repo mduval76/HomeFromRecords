@@ -49,4 +49,11 @@ namespace HomeFromRecords.Core.Dtos {
         AlbumLength? AlbumLength,
         AlbumType? AlbumType
     );
+
+    public record PaginatedResult<T>(
+        IEnumerable<T> Items,
+        int TotalItems,
+        int CurrentPage,
+        int ItemsPerPage
+    );
 }

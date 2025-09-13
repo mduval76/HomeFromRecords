@@ -8,6 +8,7 @@ import { ApiService } from '../../services/api/api.service';
 import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
 import { PageService } from '../../services/page/page.service';
+import { AlbumService, PaginatedAlbums } from '../../services/album/album.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { DetailComponent } from '../detail/detail.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -37,29 +38,29 @@ interface EnumItem {
   styleUrl: './display.component.scss'
 })
 export class DisplayComponent implements OnInit, OnDestroy {
-  cols: number = 3;
-  currentSearchQuery: string = '';
-  appliedSearchQuery: string = '';
-  data: any = [];
-  defaultImg: string = '../../../assets/images/defaults/default.webp';
-  enums: any = {};
-  format: number = 666;
-  formattedArtistName: string = '';
-  globalIndex: number = 0;
+  cols = 3;
+  currentSearchQuery = '';
+  appliedSearchQuery = '';
+  data: any[] = [];
+  defaultImg = '../../../assets/images/defaults/default.webp';
+  enums: Record<string, EnumDictionary> = {};
+  format = 666;
+  formattedArtistName = '';
   imageClasses: Record<string, string> = {};
-  isLoading: boolean = false;
-  currentPage: number = 1;
-  itemsPerPage: number = 12;
-  totalItems: number = 0;
+  isLoading = false;
+  currentPage = 1;
+  itemsPerPage = 12;
+  totalItems = 0;
 
-  alphaSortCriteria: string = 'ascending';
-  mainSortCriteria: string = 'Artist';
-  priceSortCriteria: string = 'none';
+  alphaSortCriteria = 'ascending';
+  mainSortCriteria = 'Artist';
+  priceSortCriteria = 'none';
 
-  private subscriptions: Subscription = new Subscription();
+  private subscriptions = new Subscription();
 
   constructor(
     private apiService: ApiService,
+    private albumService: AlbumService,
     private formatService: FormatService,
     private orderService: OrderService,
     private pageService: PageService,
@@ -68,7 +69,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
-    this.fetchData(this.format);
+    this.fetchData();
     this.fetchEnums();
     this.setupSubscriptions();
   }
@@ -87,54 +88,44 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return `url('${formatIcons[format]}')`;
   }
 
-  fetchData(format: number, searchQuery?: string) {
-    const queryToApply = searchQuery ?? this.appliedSearchQuery;
-    let baseUrl = `${environment.apiUrl}Album/`;
-    let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
+  fetchData(format?: number, searchQuery?: string) {
+    const queryToApply = this.appliedSearchQuery;
+    this.isLoading = true;
+
+    let fetchObservable;
 
     if (queryToApply) {
-      baseUrl += 'search';
-      queryParams += `&query=${encodeURIComponent(queryToApply)}`;
-    } else if (format !== 666) {
-      baseUrl += 'format';
-      queryParams += `&albumFormat=${format}`;
+      fetchObservable = this.albumService.getSearchAlbums(queryToApply, undefined, this.currentPage, this.itemsPerPage);
+    } else if (this.format !== 666) {
+      fetchObservable = this.albumService.getAlbumsByMainFormat(this.format, this.currentPage, this.itemsPerPage);
     } else {
-      baseUrl += 'all';
+      fetchObservable = this.albumService.getAllAlbums(this.currentPage, this.itemsPerPage);
     }
-  
-    const url = `${baseUrl}?${queryParams}`;
-    this.isLoading = true;
-    this.apiService.getData(url).subscribe({
-      next: (response) => {
-        this.totalItems = response.length;
-        let sortedData = response.items;
+
+    fetchObservable.subscribe({
+      next: (response: PaginatedAlbums) => {
+        this.totalItems = response.totalItems;
         this.pageService.setTotalItems(this.totalItems);
-        this.pageService.setSurroundingPages();
 
-        if (this.priceSortCriteria !== 'none') {
-          sortedData = this.applyPriceSorting(response, this.priceSortCriteria);
-        } 
-        else {
-          sortedData = this.sortData(response, this.mainSortCriteria, this.alphaSortCriteria === 'descending');
-        }
+        this.data = response.items.map(album => {
+          album.formatName = this.enums['mainFormats']?.[album.format] ?? '';
+          album.subFormatName = this.enums['subFormats']?.[album.subFormat] ?? '';
+          album.vinylSpeedName = this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? '';
+          album.mediaGradeName = this.enums['grades']?.[album.mediaGrade] ?? '';
+          album.sleeveGradeName = this.enums['grades']?.[album.sleeveGrade] ?? '';
+          album.packageTypeName = this.enums['packageTypes']?.[album.packageType] ?? '';
+          album.artistGenreName = this.enums['artistGenres']?.[album.artistGenre] ?? '';
+          album.albumGenreName = this.enums['albumGenres']?.[album.albumGenre] ?? '';
+          album.albumLengthName = this.enums['albumLengths']?.[album.albumLength] ?? '';
+          album.albumTypeName = this.enums['albumTypes']?.[album.albumType] ?? '';
 
-        sortedData.forEach((album: any) => {
           this.updateImageClass(album.imgFileExt);
-          album.format = this.enums.mainFormats[album.format];
-          album.subFormat = this.enums.subFormats[album.subFormat];
-          album.vinylSpeed = this.enums.vinylSpeeds[album.vinylSpeed];
-          album.mediaGrade = this.enums.grades[album.mediaGrade];
-          album.sleeveGrade = this.enums.grades[album.sleeveGrade];
-          album.packageType = this.enums.packageTypes[album.packageType];
-          album.artistGenre = this.enums.artistGenres[album.artistGenre];
-          album.albumGenre = this.enums.albumGenres[album.albumGenre];
-          album.albumLength = this.enums.albumLengths[album.albumLength];
-          album.albumType = this.enums.albumTypes[album.albumType];
+          return album;
         });
 
-        this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
         this.pageService.setCurrentData(this.data);
         this.pageService.changePage(this.currentPage);
+        this.pageService.setSurroundingPages();
         this.isLoading = false;
       },
       error: (error) => {
@@ -145,26 +136,23 @@ export class DisplayComponent implements OnInit, OnDestroy {
   }
 
   fetchEnums() {
-    const enumsUrl = `${environment.apiUrl}Constants/enums`;
-
-    this.apiService.getData(enumsUrl).subscribe({
-      next: (response) => {
-        this.enums = {};
-
-        for (const enumType in response) {
-          if (response.hasOwnProperty(enumType)) {
-            this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
-              acc[enumItem.value] = enumItem.name;
-              return acc;
-            }, {});
-          }
+  const enumsUrl = `${environment.apiUrl}Constants/enums`;
+  this.apiService.getData(enumsUrl).subscribe({
+    next: (response: any) => {
+      this.enums = {};
+      for (const enumType in response) {
+        if (response.hasOwnProperty(enumType)) {
+          this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
+            acc[enumItem.value] = enumItem.name;
+            return acc;
+          }, {});
         }
-      },
-      error: (error) => {
-        console.error('Error fetching enums:', error);
       }
-    });
-  }
+    },
+    error: (error) => console.error('Error fetching enums:', error)
+  });
+}
+
   
   handleImageError(event: Event, defaultImageUrl: string) {
     const element = event.target as HTMLImageElement;

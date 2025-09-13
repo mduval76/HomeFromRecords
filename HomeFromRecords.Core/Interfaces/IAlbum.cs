@@ -5,25 +5,28 @@ using static HomeFromRecords.Core.Data.Constants;
 
 namespace HomeFromRecords.Core.Interfaces {
     public interface IAlbum {
+        // SINGLE ITEM QUERIES
         Task<Album?> GetAlbumByIdAsync(Guid albumId);
         Task<Album?> GetAlbumByTitleAsync(string title);
         Task<Album?> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country);
-        Task<IEnumerable<Album>> GetAllAlbumsAsync();
-        Task<IEnumerable<Album>> GetAlbumsByArtistIdAsync(Guid artistId, int? albumFormat = null);
-        Task<IEnumerable<Album>> GetAlbumsByCountryAsync(string country);
-        Task<IEnumerable<Album>> GetAlbumsByRecordLabelIdAsync(Guid labelId);
-        Task<IEnumerable<Album>> GetAlbumsByMainFormatAsync(MainFormat mainFormat);
-        Task<IEnumerable<Album>> GetAlbumsBySubFormatAsync(SubFormat subFormat);
-        Task<IEnumerable<Album>> GetAlbumsByGradeAsync(Grade grade);
-        Task<IEnumerable<Album>> GetAlbumsByArtistGenreAsync(ArtistGenre artistGenre);
-        Task<IEnumerable<Album>> GetAlbumsByAlbumGenreAsync(AlbumGenre albumGenre);
-        Task<IEnumerable<Album>> GetAlbumsByAlbumLengthAsync(AlbumLength albumLength);
-        Task<IEnumerable<Album>> GetAlbumsByAlbumTypeAsync(AlbumType albumType);
-        Task<IEnumerable<Album>> GetAlbumsByFormatAndGradeAsync(MainFormat mainFormat, Grade grade);
-        Task<IEnumerable<Album>> GetSearchAlbumsAsync(string query, int? albumFormat = null);
-        Task<IEnumerable<Album>> GetRandomAlbumsAsync(int count);
 
-        // CRUD
+        // PAGINATED COLLECTIONS QUERIES
+        Task<PaginatedResult<Album>> GetAllAlbumsAsync(int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByArtistIdAsync(Guid artistId, int? albumFormat, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByCountryAsync(string country, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByRecordLabelIdAsync(Guid labelId, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByMainFormatAsync(MainFormat mainFormat, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsBySubFormatAsync(SubFormat subFormat, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByGradeAsync(Grade grade, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByArtistGenreAsync(ArtistGenre artistGenre, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByAlbumGenreAsync(AlbumGenre albumGenre, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByAlbumLengthAsync(AlbumLength albumLength, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByAlbumTypeAsync(AlbumType albumType, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetAlbumsByFormatAndGradeAsync(MainFormat mainFormat, Grade grade, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetSearchAlbumsAsync(string query, int? albumFormat, int pageNumber, int pageSize = 12);
+        Task<PaginatedResult<Album>> GetRandomAlbumsAsync(int count, int pageNumber, int pageSize = 12);
+
+        // CRUD OPERATIONS
         Task CreateAlbumAsync(Album album);
         Task<Album?> UpdateAlbumAsync(Guid albumId, AlbumUpdateDto updateData);
         Task<Album?> DeleteAlbumAsync(Guid albumId);

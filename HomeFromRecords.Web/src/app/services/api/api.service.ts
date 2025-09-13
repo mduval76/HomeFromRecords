@@ -9,6 +9,17 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders();
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    
+    return headers;
+  }
+
   public getData(url: string): Observable<any> {
     return this.http.get(url, { headers: this.getHeaders() });
   }
@@ -23,16 +34,5 @@ export class ApiService {
 
   public deleteData(url: string): Observable<any> {
     return this.http.delete(url, { headers: this.getHeaders() });
-  }
-
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    let headers = new HttpHeaders();
-
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
-    
-    return headers;
   }
 }
