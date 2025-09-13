@@ -106,7 +106,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.apiService.getData(url).subscribe({
       next: (response) => {
-        this.totalItems = response.items?.length ?? 0;
+        this.totalItems = response.length;
         let sortedData = response.items;
         this.pageService.setTotalItems(this.totalItems);
         this.pageService.setSurroundingPages();
