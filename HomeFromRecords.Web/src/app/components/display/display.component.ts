@@ -39,6 +39,7 @@ interface EnumItem {
 export class DisplayComponent implements OnInit, OnDestroy {
   cols: number = 3;
   currentSearchQuery: string = '';
+  appliedSearchQuery: string = '';
   data: any = [];
   defaultImg: string = '../../../assets/images/defaults/default.webp';
   enums: any = {};
@@ -86,33 +87,26 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return `url('${formatIcons[format]}')`;
   }
 
-  fetchData(format: number) {
+  fetchData(format: number, searchQuery?: string) {
+    const queryToApply = searchQuery ?? this.appliedSearchQuery;
     let baseUrl = `${environment.apiUrl}Album/`;
     let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
 
-    if (this.currentSearchQuery) {
+    if (queryToApply) {
       baseUrl += 'search';
-      queryParams += `&query=${encodeURIComponent(this.currentSearchQuery)}`;
-      if (format !== 666) {
-        queryParams += `&albumFormat=${format}`;
-      }
-    } 
-    else {
-      if (format === 666) {
-        baseUrl += 'all';
-      } 
-      else {
-        baseUrl += 'format';
-        queryParams += `&albumFormat=${format}`;
-      }
+      queryParams += `&query=${encodeURIComponent(queryToApply)}`;
+    } else if (format !== 666) {
+      baseUrl += 'format';
+      queryParams += `&albumFormat=${format}`;
+    } else {
+      baseUrl += 'all';
     }
   
-    let url = `${baseUrl}?${queryParams}`;
+    const url = `${baseUrl}?${queryParams}`;
     this.isLoading = true;
-
     this.apiService.getData(url).subscribe({
       next: (response) => {
-        this.totalItems = response.length;
+        this.totalItems = response.items?.length ?? 0;
         let sortedData = response.items;
         this.pageService.setTotalItems(this.totalItems);
         this.pageService.setSurroundingPages();
@@ -280,7 +274,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
   }
 
   refreshDisplayData() {
-    this.fetchData(this.format);
+    this.fetchData(this.format, this.appliedSearchQuery);
   };
 
   private setupSubscriptions() {
@@ -288,32 +282,34 @@ export class DisplayComponent implements OnInit, OnDestroy {
       this.format = format;
       this.currentPage = 1;
       if (this.isLoading) return;
-      this.fetchData(this.format);
+      this.fetchData(this.format, this.appliedSearchQuery);
     });
 
     const searchQuerySubscription = this.sharedService.getSearchQuery().subscribe(query => {
       this.currentSearchQuery = query;
+      this.appliedSearchQuery = query;
       this.currentPage = 1;
       if (this.isLoading) return;
-      this.fetchData(this.format);
+      this.fetchData(this.format, this.appliedSearchQuery);
     });
 
     const mainSortSubscription = this.sharedService.getMainSortCriteria().subscribe(criteria => {
       this.mainSortCriteria = criteria;
-      if (this.isLoading) return;
-      this.fetchData(this.format);
+      if (!this.isLoading) {
+        this.fetchData(this.format, this.appliedSearchQuery);
+      }
     });
 
     const alphaSortSubscription = this.sharedService.getAlphaSortCriteria().subscribe(criteria => {
       this.alphaSortCriteria = criteria;
       if (this.isLoading) return;
-      this.fetchData(this.format);
+      this.fetchData(this.format, this.appliedSearchQuery);
     });
 
     const priceSortSubscription = this.sharedService.getPriceSortCriteria().subscribe(criteria => {
       this.priceSortCriteria = criteria;
       if (this.isLoading) return;
-      this.fetchData(this.format);
+      this.fetchData(this.format, this.appliedSearchQuery);
     });
 
     const pageServiceSubscription = this.pageService.currentPage$.subscribe(page => {
@@ -321,7 +317,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.currentPage = page;
         this.pageService.changePage(this.currentPage);
         if (this.isLoading) return;
-        this.fetchData(this.format);
+        this.fetchData(this.format, this.appliedSearchQuery);
       }
     });
 
@@ -341,11 +337,23 @@ export class DisplayComponent implements OnInit, OnDestroy {
   }
 
   searchForArtist(artistName: string): void {
-    this.sharedService.setSearchQuery(artistName);
     this.currentSearchQuery = this.getFormattedArtistName(artistName);
+    this.appliedSearchQuery = this.currentSearchQuery;
+    this.currentPage = 1;
+    this.fetchData(this.format, this.appliedSearchQuery);
   }  
   
   searchForRecordLabel(recordLabel: string): void {
-    this.sharedService.setSearchQuery(recordLabel);
+    this.currentSearchQuery = recordLabel;
+    this.appliedSearchQuery = recordLabel;
+    this.currentPage = 1;
+    this.fetchData(this.format, this.appliedSearchQuery);
+  }
+
+  clearSearch() {
+    this.currentSearchQuery = '';
+    this.appliedSearchQuery = '';
+    this.currentPage = 1;
+    this.fetchData(this.format);
   }
 }
