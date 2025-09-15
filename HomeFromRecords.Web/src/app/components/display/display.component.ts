@@ -302,9 +302,9 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   private mapSortField(mainSort: string): string {
     switch (mainSort) {
-      case 'Artist': return 'artistName';
+      case 'Artist': return 'artist';
       case 'Album': return 'title';
-      default: return 'artistName';
+      default: return 'artist';
     }
   }
 }

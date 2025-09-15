@@ -1,8 +1,8 @@
 <div class="display-container" *ngIf="state$ | async as state">
     <div class="title">
+        <h1 *ngIf="isEmpty && !isLoading">OOPS! No results for these choices!</h1>
         <h1 *ngIf="state.searchQuery && !isEmpty">Results for {{state.searchQuery}}</h1>
         <h1 *ngIf="!state.searchQuery">Catalog</h1>
-        <h1 *ngIf="isEmpty">OOPS! No results for these choices!</h1>
     </div>
     <div class="spinner-container" *ngIf="isLoading" >
         <mat-spinner class="spinner" diameter="40"></mat-spinner>  
