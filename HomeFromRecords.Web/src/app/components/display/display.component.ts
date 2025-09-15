@@ -95,15 +95,12 @@ export class DisplayComponent implements OnInit, OnDestroy {
   let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
 
   if (queryToApply) {
-    // Searching by query
     baseUrl += 'search';
     queryParams += `&query=${encodeURIComponent(queryToApply)}`;
   } else if (formatToApply !== 666) {
-    // Filtering by format
     baseUrl += 'format';
     queryParams += `&albumFormat=${formatToApply}`;
   } else {
-    // Default: get paged albums
     baseUrl += 'paged';
   }
 
@@ -112,18 +109,15 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   this.apiService.getData(url).subscribe({
     next: (response: any) => {
-      // Expecting a PagedResult structure
       if (!response || !Array.isArray(response.items)) {
         console.error('Invalid API response', response);
         this.isLoading = false;
         return;
       }
 
-      // Assign items and total count
       this.data = response.items;
       this.totalItems = response.totalItems;
 
-      // Map enums and update image classes
       this.data.forEach((album: any) => {
         this.updateImageClass(album.imgFileExt);
         album.format = this.enums['mainFormats']?.[album.format] ?? album.format;
@@ -138,7 +132,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
         album.albumType = this.enums['albumTypes']?.[album.albumType] ?? album.albumType;
       });
 
-      // Update pagination service
       this.pageService.setTotalItems(this.totalItems);
       this.pageService.setCurrentData(this.data);
 
