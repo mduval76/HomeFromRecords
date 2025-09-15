@@ -25,7 +25,7 @@ namespace HomeFromRecords.Core.Controllers {
         }
 
         // Helper methods
-        private object[] GetEnumValues<T>() where T : Enum {
+        private static object[] GetEnumValues<T>() where T : Enum {
             return Enum.GetValues(typeof(T))
                        .Cast<T>()
                        .Select(e => new {
@@ -35,7 +35,7 @@ namespace HomeFromRecords.Core.Controllers {
                        .ToArray();
         }
 
-        private string GetTransformedName(string name) {
+        private static string GetTransformedName(string name) {
             var transformations = new Dictionary<string, string> {
                 { "TWELVE_INCH", "12\"" },
                 { "TEN_INCH", "10\"" },
@@ -68,7 +68,7 @@ namespace HomeFromRecords.Core.Controllers {
             }
         }
 
-        private string CapitalizeWords(string value) {
+        private static string CapitalizeWords(string value) {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(value.ToLower());
         }
     }

@@ -41,6 +41,16 @@ namespace HomeFromRecords.Core.Controllers {
             return Ok(albumDto);
         }
 
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<AlbumDto>>> GetAllAlbums(int page = 1, int itemsPerPage = 12) {
+            var totalCount = await _albumRepos.GetAlbumCountAsync();
+            var albums = await _albumRepos.GetAlbumsPagedAsync(page, itemsPerPage);
+            var albumDtos = await AssignPropertiesInCollection(albums);
+            var pagedResult = new PagedResult<AlbumDto>(albumDtos, totalCount, page, itemsPerPage);
+
+            return Ok(pagedResult);
+        }
+
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAllAlbums() {
             var albums = await _albumRepos.GetAllAlbumsAsync();

@@ -37,26 +37,25 @@ interface EnumItem {
   styleUrl: './display.component.scss'
 })
 export class DisplayComponent implements OnInit, OnDestroy {
-  cols: number = 3;
-  currentSearchQuery: string = '';
-  appliedSearchQuery: string = '';
-  data: any = [];
-  defaultImg: string = '../../../assets/images/defaults/default.webp';
-  enums: any = {};
-  format: number = 666;
-  formattedArtistName: string = '';
-  globalIndex: number = 0;
+  cols = 3;
+  currentSearchQuery = '';
+  appliedSearchQuery = '';
+  data: any[] = [];
+  defaultImg = '../../../assets/images/defaults/default.webp';
+  enums: Record<string, EnumDictionary> = {};
+  format = 666;
+  formattedArtistName = '';
   imageClasses: Record<string, string> = {};
-  isLoading: boolean = false;
-  currentPage: number = 1;
-  itemsPerPage: number = 12;
-  totalItems: number = 0;
+  isLoading = false;
+  currentPage = 1;
+  itemsPerPage = 12;
+  totalItems = 0;
 
-  alphaSortCriteria: string = 'ascending';
-  mainSortCriteria: string = 'Artist';
-  priceSortCriteria: string = 'none';
+  alphaSortCriteria = 'ascending';
+  mainSortCriteria = 'Artist';
+  priceSortCriteria = 'none';
 
-  private subscriptions: Subscription = new Subscription();
+  private subscriptions = new Subscription();
 
   constructor(
     private apiService: ApiService,
@@ -68,7 +67,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
-    this.fetchData(this.format);
+    this.fetchData();
     this.fetchEnums();
     this.setupSubscriptions();
   }
@@ -87,84 +86,91 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return `url('${formatIcons[format]}')`;
   }
 
-  fetchData(format: number, searchQuery?: string) {
-    const queryToApply = searchQuery ?? this.appliedSearchQuery;
-    let baseUrl = `${environment.apiUrl}Album/`;
-    let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
+  fetchData(format?: number, searchQuery?: string) {
+  const queryToApply = searchQuery ?? this.appliedSearchQuery;
+  const formatToApply = format ?? 666; // default format
 
-    if (queryToApply) {
-      baseUrl += 'search';
-      queryParams += `&query=${encodeURIComponent(queryToApply)}`;
-    } else if (format !== 666) {
-      baseUrl += 'format';
-      queryParams += `&albumFormat=${format}`;
-    } else {
-      baseUrl += 'all';
-    }
-  
-    const url = `${baseUrl}?${queryParams}`;
-    this.isLoading = true;
-    this.apiService.getData(url).subscribe({
-      next: (response) => {
-        this.totalItems = response.length;
-        let sortedData = response.items;
-        this.pageService.setTotalItems(this.totalItems);
-        this.pageService.setSurroundingPages();
+  // Base URL
+  let baseUrl = `${environment.apiUrl}Album/`;
+  let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
 
-        if (this.priceSortCriteria !== 'none') {
-          sortedData = this.applyPriceSorting(response, this.priceSortCriteria);
-        } 
-        else {
-          sortedData = this.sortData(response, this.mainSortCriteria, this.alphaSortCriteria === 'descending');
-        }
-
-        sortedData.forEach((album: any) => {
-          this.updateImageClass(album.imgFileExt);
-          album.format = this.enums.mainFormats[album.format];
-          album.subFormat = this.enums.subFormats[album.subFormat];
-          album.vinylSpeed = this.enums.vinylSpeeds[album.vinylSpeed];
-          album.mediaGrade = this.enums.grades[album.mediaGrade];
-          album.sleeveGrade = this.enums.grades[album.sleeveGrade];
-          album.packageType = this.enums.packageTypes[album.packageType];
-          album.artistGenre = this.enums.artistGenres[album.artistGenre];
-          album.albumGenre = this.enums.albumGenres[album.albumGenre];
-          album.albumLength = this.enums.albumLengths[album.albumLength];
-          album.albumType = this.enums.albumTypes[album.albumType];
-        });
-
-        this.data = sortedData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
-        this.pageService.setCurrentData(this.data);
-        this.pageService.changePage(this.currentPage);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error(error);
-        this.isLoading = false;
-      }
-    });
+  if (queryToApply) {
+    // Searching by query
+    baseUrl += 'search';
+    queryParams += `&query=${encodeURIComponent(queryToApply)}`;
+  } else if (formatToApply !== 666) {
+    // Filtering by format
+    baseUrl += 'format';
+    queryParams += `&albumFormat=${formatToApply}`;
+  } else {
+    // Default: get paged albums
+    baseUrl += 'paged';
   }
+
+  const url = `${baseUrl}?${queryParams}`;
+  this.isLoading = true;
+
+  this.apiService.getData(url).subscribe({
+    next: (response: any) => {
+      // Expecting a PagedResult structure
+      if (!response || !Array.isArray(response.items)) {
+        console.error('Invalid API response', response);
+        this.isLoading = false;
+        return;
+      }
+
+      // Assign items and total count
+      this.data = response.items;
+      this.totalItems = response.totalItems;
+
+      // Map enums and update image classes
+      this.data.forEach((album: any) => {
+        this.updateImageClass(album.imgFileExt);
+        album.format = this.enums['mainFormats']?.[album.format] ?? album.format;
+        album.subFormat = this.enums['subFormats']?.[album.subFormat] ?? album.subFormat;
+        album.vinylSpeed = this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? album.vinylSpeed;
+        album.mediaGrade = this.enums['grades']?.[album.mediaGrade] ?? album.mediaGrade;
+        album.sleeveGrade = this.enums['grades']?.[album.sleeveGrade] ?? album.sleeveGrade;
+        album.packageType = this.enums['packageTypes']?.[album.packageType] ?? album.packageType;
+        album.artistGenre = this.enums['artistGenres']?.[album.artistGenre] ?? album.artistGenre;
+        album.albumGenre = this.enums['albumGenres']?.[album.albumGenre] ?? album.albumGenre;
+        album.albumLength = this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength;
+        album.albumType = this.enums['albumTypes']?.[album.albumType] ?? album.albumType;
+      });
+
+      // Update pagination service
+      this.pageService.setTotalItems(this.totalItems);
+      this.pageService.setCurrentData(this.data);
+
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error('Error fetching data:', error);
+      this.isLoading = false;
+    }
+  });
+}
+
+
 
   fetchEnums() {
-    const enumsUrl = `${environment.apiUrl}Constants/enums`;
-
-    this.apiService.getData(enumsUrl).subscribe({
-      next: (response) => {
-        this.enums = {};
-
-        for (const enumType in response) {
-          if (response.hasOwnProperty(enumType)) {
-            this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
-              acc[enumItem.value] = enumItem.name;
-              return acc;
-            }, {});
-          }
+  const enumsUrl = `${environment.apiUrl}Constants/enums`;
+  this.apiService.getData(enumsUrl).subscribe({
+    next: (response: any) => {
+      this.enums = {};
+      for (const enumType in response) {
+        if (response.hasOwnProperty(enumType)) {
+          this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
+            acc[enumItem.value] = enumItem.name;
+            return acc;
+          }, {});
         }
-      },
-      error: (error) => {
-        console.error('Error fetching enums:', error);
       }
-    });
-  }
+    },
+    error: (error) => console.error('Error fetching enums:', error)
+  });
+}
+
   
   handleImageError(event: Event, defaultImageUrl: string) {
     const element = event.target as HTMLImageElement;

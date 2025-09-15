@@ -8,6 +8,7 @@ namespace HomeFromRecords.Core.Interfaces {
         Task<Album?> GetAlbumByIdAsync(Guid albumId);
         Task<Album?> GetAlbumByTitleAsync(string title);
         Task<Album?> CheckForDoubles(string artistName, string title, string labelName, MainFormat mainFormat, string country);
+        Task<IEnumerable<Album>> GetAlbumsPagedAsync(int page, int itemsPerPage);
         Task<IEnumerable<Album>> GetAllAlbumsAsync();
         Task<IEnumerable<Album>> GetAlbumsByArtistIdAsync(Guid artistId, int? albumFormat = null);
         Task<IEnumerable<Album>> GetAlbumsByCountryAsync(string country);
@@ -22,6 +23,7 @@ namespace HomeFromRecords.Core.Interfaces {
         Task<IEnumerable<Album>> GetAlbumsByFormatAndGradeAsync(MainFormat mainFormat, Grade grade);
         Task<IEnumerable<Album>> GetSearchAlbumsAsync(string query, int? albumFormat = null);
         Task<IEnumerable<Album>> GetRandomAlbumsAsync(int count);
+        Task<int> GetAlbumCountAsync();
 
         // CRUD
         Task CreateAlbumAsync(Album album);

@@ -62,6 +62,15 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
+        public async Task<IEnumerable<Album>> GetAlbumsPagedAsync(int page, int itemsPerPage) {
+            return await _context.Albums
+                .OrderBy(a => a.Artist!.ArtistName)
+                .ThenBy(a => a.Title)
+                .Skip((page - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Album>> GetAllAlbumsAsync() {
             try {
                 return await _context.Albums.ToListAsync();
@@ -255,6 +264,10 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
+        public async Task<int> GetAlbumCountAsync() {
+            return await _context.Albums.CountAsync();
+        }
+
         // CRUD
         public async Task CreateAlbumAsync(Album album) {
             try {
@@ -371,7 +384,7 @@ namespace HomeFromRecords.Core.Repositories {
             }
         }
 
-        // Helper methods
+        // HELPER
         private static string NormalizeQuery(string query) {
             var parts = query.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 2) {
