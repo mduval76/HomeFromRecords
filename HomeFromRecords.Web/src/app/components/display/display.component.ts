@@ -46,23 +46,11 @@ export class DisplayComponent implements OnInit, OnDestroy {
   enums: Record<string, EnumDictionary> = {};
   format = 666;
   formattedArtistName = '';
-  cols = 3;
-  currentSearchQuery = '';
-  appliedSearchQuery = '';
-  data: any[] = [];
-  defaultImg = '../../../assets/images/defaults/default.webp';
-  enums: Record<string, EnumDictionary> = {};
-  format = 666;
-  formattedArtistName = '';
   imageClasses: Record<string, string> = {};
   isLoading = false;
   currentPage = 1;
   itemsPerPage = 12;
   totalItems = 0;
-  isLoading = false;
-  currentPage = 1;
-  itemsPerPage = 12;
-  totalItems = 0;
 
   alphaSortCriteria = 'ascending';
   mainSortCriteria = 'Artist';
@@ -71,7 +59,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
   mainSortCriteria = 'Artist';
   priceSortCriteria = 'none';
 
-  private subscriptions = new Subscription();
   private subscriptions = new Subscription();
 
   constructor(
