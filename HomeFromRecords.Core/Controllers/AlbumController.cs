@@ -2,10 +2,7 @@
 using HomeFromRecords.Core.Data.Entities;
 using HomeFromRecords.Core.Dtos;
 using HomeFromRecords.Core.Interfaces;
-using HomeFromRecords.Core.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using static HomeFromRecords.Core.Data.Constants;
 
 namespace HomeFromRecords.Core.Controllers {

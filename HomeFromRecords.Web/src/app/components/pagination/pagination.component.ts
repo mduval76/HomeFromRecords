@@ -29,7 +29,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.isLoading = true;
+   // this.isLoading = true;
 
     this.pageService.totalItems$.subscribe(totalItems => {
       this.pageService.itemsPerPage$.subscribe(itemsPerPage => {
@@ -57,7 +57,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.isLoading = false;
+   // this.isLoading = false;
   }
 
   ngOnDestroy() {

@@ -4,6 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subscription, BehaviorSubject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ApiService } from '../../services/api/api.service';
 import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
@@ -11,14 +13,20 @@ import { PageService } from '../../services/page/page.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { DetailComponent } from '../detail/detail.component';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import { AlbumDto } from '../../models/album.model';
 
 type EnumDictionary = { [key: number]: string };
 
-interface EnumItem {
-  name: string;
-  value: number;
+interface EnumItem { name: string; value: number; }
+interface DisplayState {
+  format: number;
+  searchQuery: string;
+  mainSort: string;
+  alphaSort: 'ascending' | 'descending';
+  priceSort: 'none' | 'ascending' | 'descending';
+  currentPage: number;
+  itemsPerPage: number;
 }
 
 @Component({
@@ -38,24 +46,29 @@ interface EnumItem {
 })
 export class DisplayComponent implements OnInit, OnDestroy {
   cols = 3;
-  currentSearchQuery = '';
-  appliedSearchQuery = '';
-  data: any[] = [];
   defaultImg = '../../../assets/images/defaults/default.webp';
   enums: Record<string, EnumDictionary> = {};
-  format = 666;
-  formattedArtistName = '';
-  imageClasses: Record<string, string> = {};
-  isLoading = false;
-  currentPage = 1;
-  itemsPerPage = 12;
+  data: any[] = [];
+  displayedData: any[] = [];
   totalItems = 0;
+  isLoading = false;
+  imageClasses: Record<string, string> = {};
 
   alphaSortCriteria = 'ascending';
   mainSortCriteria = 'Artist';
   priceSortCriteria = 'none';
 
   private subscriptions = new Subscription();
+
+  public state$ = new BehaviorSubject<DisplayState>({
+    format: 666,
+    searchQuery: '',
+    mainSort: 'Artist',
+    alphaSort: 'ascending',
+    priceSort: 'none',
+    currentPage: 1,
+    itemsPerPage: 12
+  });
 
   constructor(
     private apiService: ApiService,
@@ -67,13 +80,101 @@ export class DisplayComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
-    this.fetchData();
     this.fetchEnums();
     this.setupSubscriptions();
+
+    this.subscriptions.add(
+      this.state$
+        .pipe(
+          distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+          switchMap(state => {
+            this.isLoading = true;
+            return this.apiService.getData(this.buildApiUrl(state));
+          })
+        )
+        .subscribe({
+          next: (response: { items: AlbumDto[]; totalItems: number }) => {
+            if (!response || !Array.isArray(response.items)) {
+              console.error('Invalid API response', response);
+              this.isLoading = false;
+              return;
+            }
+
+            this.data = response.items.map((album: AlbumDto) => this.mapEnums(album));
+            this.data.forEach(album => this.updateImageClass(album.imgFileExt));
+            this.totalItems = response.totalItems;
+
+            this.pageService.setTotalItems(this.totalItems);
+            this.pageService.setCurrentData(this.data);
+
+            this.applyClientSideSorting();
+            this.isLoading = false;
+          },
+          error: error => {
+            console.error('Error fetching data:', error);
+            this.isLoading = false;
+          }
+        })
+    );
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  private buildApiUrl(state: DisplayState) {
+    let baseUrl = `${environment.apiUrl}Album/`;
+    let queryParams = `page=${state.currentPage}&itemsPerPage=${state.itemsPerPage}`;
+
+    if (state.searchQuery) {
+      baseUrl += 'search';
+      queryParams += `&query=${encodeURIComponent(state.searchQuery)}`;
+    } else if (state.format !== 666) {
+      baseUrl += 'format';
+      queryParams += `&albumFormat=${state.format}`;
+    } else {
+      baseUrl += 'paged';
+    }
+
+    return `${baseUrl}?${queryParams}`;
+  }
+
+  private mapEnums(album: any) {
+    return {
+      ...album,
+      format: this.enums['mainFormats']?.[album.format] ?? album.format,
+      subFormat: this.enums['subFormats']?.[album.subFormat] ?? album.subFormat,
+      vinylSpeed: this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? album.vinylSpeed,
+      mediaGrade: this.enums['grades']?.[album.mediaGrade] ?? album.mediaGrade,
+      sleeveGrade: this.enums['grades']?.[album.sleeveGrade] ?? album.sleeveGrade,
+      packageType: this.enums['packageTypes']?.[album.packageType] ?? album.packageType,
+      artistGenre: this.enums['artistGenres']?.[album.artistGenre] ?? album.artistGenre,
+      albumGenre: this.enums['albumGenres']?.[album.albumGenre] ?? album.albumGenre,
+      albumLength: this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength,
+      albumType: this.enums['albumTypes']?.[album.albumType] ?? album.albumType
+    };
+  }
+
+  private applyClientSideSorting() {
+    const state = this.state$.getValue();
+
+    // ALPHA
+    let sorted = [...this.data].sort((a, b) => {
+      const compareField = state.mainSort === 'Artist' ? a.artistName : a.title;
+      const compareWith = state.mainSort === 'Artist' ? b.artistName : b.title;
+      let result = compareField.localeCompare(compareWith);
+      if (state.alphaSort === 'descending') result = -result;
+      return result;
+    });
+
+    // PRICE
+    if (state.priceSort !== 'none') {
+      sorted.sort((a, b) =>
+        state.priceSort === 'ascending' ? a.price - b.price : b.price - a.price
+      );
+    }
+
+    this.displayedData = sorted;
   }
 
   getIconUrl(format: string): string {
@@ -86,158 +187,119 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return `url('${formatIcons[format]}')`;
   }
 
-  fetchData(format?: number, searchQuery?: string) {
-  const queryToApply = searchQuery ?? this.appliedSearchQuery;
-  const formatToApply = format ?? 666; // default format
-
-  // Base URL
-  let baseUrl = `${environment.apiUrl}Album/`;
-  let queryParams = `page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`;
-
-  if (queryToApply) {
-    baseUrl += 'search';
-    queryParams += `&query=${encodeURIComponent(queryToApply)}`;
-  } else if (formatToApply !== 666) {
-    baseUrl += 'format';
-    queryParams += `&albumFormat=${formatToApply}`;
-  } else {
-    baseUrl += 'paged';
+  private updateState(partial: Partial<DisplayState>) {
+    this.state$.next({ ...this.state$.getValue(), ...partial });
   }
 
-  const url = `${baseUrl}?${queryParams}`;
-  this.isLoading = true;
+  fetchData(state: DisplayState) {
+    this.isLoading = true;
 
-  this.apiService.getData(url).subscribe({
-    next: (response: any) => {
-      if (!response || !Array.isArray(response.items)) {
-        console.error('Invalid API response', response);
-        this.isLoading = false;
-        return;
-      }
+    let baseUrl = `${environment.apiUrl}Album/`;
+    let queryParams = `page=${state.currentPage}&itemsPerPage=${state.itemsPerPage}`;
 
-      this.data = response.items;
-      this.totalItems = response.totalItems;
-
-      this.data.forEach((album: any) => {
-        this.updateImageClass(album.imgFileExt);
-        album.format = this.enums['mainFormats']?.[album.format] ?? album.format;
-        album.subFormat = this.enums['subFormats']?.[album.subFormat] ?? album.subFormat;
-        album.vinylSpeed = this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? album.vinylSpeed;
-        album.mediaGrade = this.enums['grades']?.[album.mediaGrade] ?? album.mediaGrade;
-        album.sleeveGrade = this.enums['grades']?.[album.sleeveGrade] ?? album.sleeveGrade;
-        album.packageType = this.enums['packageTypes']?.[album.packageType] ?? album.packageType;
-        album.artistGenre = this.enums['artistGenres']?.[album.artistGenre] ?? album.artistGenre;
-        album.albumGenre = this.enums['albumGenres']?.[album.albumGenre] ?? album.albumGenre;
-        album.albumLength = this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength;
-        album.albumType = this.enums['albumTypes']?.[album.albumType] ?? album.albumType;
-      });
-
-      this.pageService.setTotalItems(this.totalItems);
-      this.pageService.setCurrentData(this.data);
-
-      this.isLoading = false;
-    },
-    error: (error) => {
-      console.error('Error fetching data:', error);
-      this.isLoading = false;
+    if (state.searchQuery) {
+      baseUrl += 'search';
+      queryParams += `&query=${encodeURIComponent(state.searchQuery)}`;
+    } else if (state.format !== 666) {
+      baseUrl += 'format';
+      queryParams += `&albumFormat=${state.format}`;
+    } else {
+      baseUrl += 'paged';
     }
-  });
-}
 
+    const url = `${baseUrl}?${queryParams}`;
+
+    this.apiService.getData(url).subscribe({
+      next: (response: any) => {
+        if (!response || !Array.isArray(response.items)) {
+          console.error('Invalid API response', response);
+          this.isLoading = false;
+          return;
+        }
+
+        this.data = response.items.map((album: any) => ({
+          ...album,
+          format: this.enums['mainFormats']?.[album.format] ?? album.format,
+          subFormat: this.enums['subFormats']?.[album.subFormat] ?? album.subFormat,
+          vinylSpeed: this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? album.vinylSpeed,
+          mediaGrade: this.enums['grades']?.[album.mediaGrade] ?? album.mediaGrade,
+          sleeveGrade: this.enums['grades']?.[album.sleeveGrade] ?? album.sleeveGrade,
+          packageType: this.enums['packageTypes']?.[album.packageType] ?? album.packageType,
+          artistGenre: this.enums['artistGenres']?.[album.artistGenre] ?? album.artistGenre,
+          albumGenre: this.enums['albumGenres']?.[album.albumGenre] ?? album.albumGenre,
+          albumLength: this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength,
+          albumType: this.enums['albumTypes']?.[album.albumType] ?? album.albumType
+        }));
+
+        this.data.forEach(album => this.updateImageClass(album.imgFileExt));
+
+        this.totalItems = response.totalItems;
+        this.pageService.setTotalItems(this.totalItems);
+        this.pageService.setCurrentData(this.data);
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
 
   fetchEnums() {
-  const enumsUrl = `${environment.apiUrl}Constants/enums`;
-  this.apiService.getData(enumsUrl).subscribe({
-    next: (response: any) => {
-      this.enums = {};
-      for (const enumType in response) {
-        if (response.hasOwnProperty(enumType)) {
-          this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
-            acc[enumItem.value] = enumItem.name;
-            return acc;
-          }, {});
+    const enumsUrl = `${environment.apiUrl}Constants/enums`;
+    this.apiService.getData(enumsUrl).subscribe({
+      next: (response: any) => {
+        this.enums = {};
+        for (const enumType in response) {
+          if (response.hasOwnProperty(enumType)) {
+            this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
+              acc[enumItem.value] = enumItem.name;
+              return acc;
+            }, {});
+          }
         }
-      }
-    },
-    error: (error) => console.error('Error fetching enums:', error)
-  });
-}
-
-  
-  handleImageError(event: Event, defaultImageUrl: string) {
-    const element = event.target as HTMLImageElement;
-    element.src = defaultImageUrl;
-  }
-
-  sortData(data: any[], mainCriteria: string, reverseAlphabetical: boolean): any[] {
-    let sortedData = [...data];
-    sortedData.sort((a, b) => {
-      if (mainCriteria === 'Artist') {
-        return a.artistName.localeCompare(b.artistName);
-      } else {
-        return a.title.localeCompare(b.title);
-      }
+      },
+      error: (error) => console.error('Error fetching enums:', error)
     });
-
-    if (reverseAlphabetical) {
-      sortedData.reverse();
-    }
-
-    return sortedData;
   }
 
-  applyPriceSorting(data: any[], priceCriteria: string): any[] {
-    data.sort((a, b) => {
-      return priceCriteria === 'ascending' ? a.price - b.price : b.price - a.price;
-    });
-
-    let priceSortedData = [];
-    let currentPrice = null;
-    let currentPriceGroup = [];
-
-    for (let item of data) {
-      if (item.price !== currentPrice) {
-        if (currentPriceGroup.length > 0) {
-          priceSortedData.push(...this.sortData(currentPriceGroup, this.mainSortCriteria, this.alphaSortCriteria === 'descending'));
-          currentPriceGroup = [];
-        }
-        currentPrice = item.price;
-      }
-      currentPriceGroup.push(item);
-    }
-
-    if (currentPriceGroup.length > 0) {
-      priceSortedData.push(...this.sortData(currentPriceGroup, this.mainSortCriteria, this.alphaSortCriteria === 'descending'));
-    }
-
-    return priceSortedData;
-  }
-
-  getFormattedArtistName(str: string): string {
-    this.formattedArtistName = this.formatService.formatArtistName(str);
-    return this.formattedArtistName;
-  }
-
-  updateImageClass(imageUrl: string) {
+  private updateImageClass(imageUrl: string) {
     const img = new Image();
     img.onload = () => {
-      if (img.width === 500 && img.height === 500) {
-        this.imageClasses[imageUrl] = 'square-format';
-      } else if (img.height === 500 && img.width < 500) {
-        this.imageClasses[imageUrl] = 'tall-format';
-      } else {
-        this.imageClasses[imageUrl] = 'wide-format';
-      }
+      if (img.width === 500 && img.height === 500) this.imageClasses[imageUrl] = 'square-format';
+      else if (img.height === 500 && img.width < 500) this.imageClasses[imageUrl] = 'tall-format';
+      else this.imageClasses[imageUrl] = 'wide-format';
     };
-    
-    img.onerror = () => {
-      this.imageClasses[imageUrl] = 'default-format';
-    };
+    img.onerror = () => (this.imageClasses[imageUrl] = 'default-format');
     img.src = imageUrl;
   }
 
-  addToCart(album: any): void {
+  
+  handleImageError(event: Event, defaultImageUrl: string) {
+    (event.target as HTMLImageElement).src = defaultImageUrl;
+  }
+
+  sortData(data: any[], mainCriteria: string, reverseAlphabetical: boolean): any[] {
+    let sorted = [...data].sort((a, b) =>
+      mainCriteria === 'Artist' ? a.artistName.localeCompare(b.artistName) : a.title.localeCompare(b.title)
+    );
+    if (reverseAlphabetical) sorted.reverse();
+    return sorted;
+  }
+
+  applyPriceSorting(data: any[], priceCriteria: string): any[] {
+    if (priceCriteria === 'none') return data;
+    data.sort((a, b) => (priceCriteria === 'ascending' ? a.price - b.price : b.price - a.price));
+    return data;
+  }
+
+  getFormattedArtistName(str: string) {
+    return this.formatService.formatArtistName(str);
+  }
+
+  addToCart(album: any) {
     const cartItem: CartItem = {
       id: album.albumId,
       artistName: album.artistName,
@@ -246,113 +308,83 @@ export class DisplayComponent implements OnInit, OnDestroy {
       imgFileExt: album.imgFileExt,
       quantity: 1
     };
-    
     this.orderService.addItemToCart(cartItem);
   }
 
-  openDialog(clickedItem: any, itemIndex: number) {
-    const globalIndex = (this.currentPage - 1) * this.itemsPerPage + itemIndex;
-    
+  openDialog(album: any, itemIndex: number) {
+    const state = this.state$.getValue();
+    const globalIndex = (state.currentPage - 1) * state.itemsPerPage + itemIndex;
+
     const dialogRef = this.dialog.open(DetailComponent, {
       panelClass: 'border-dialog',
-      data: { 
-        selectedItem: clickedItem, 
-        items: this.data, 
-        imageClass: this.imageClasses[clickedItem.imgFileExt],
-        currentIndex: itemIndex, 
-        globalIndex: globalIndex,
+      data: {
+        selectedItem: album,
+        items: this.displayedData,
+        imageClass: this.imageClasses[album.imgFileExt],
+        currentIndex: itemIndex,
+        globalIndex,
         totalItems: this.totalItems,
-        itemsPerPage: this.itemsPerPage,
-        currentPage: this.currentPage
-       }
+        itemsPerPage: state.itemsPerPage,
+        currentPage: state.currentPage
+      }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+    dialogRef.afterClosed().subscribe(result => console.log(`Dialog result: ${result}`));
   }
-
-  refreshDisplayData() {
-    this.fetchData(this.format, this.appliedSearchQuery);
-  };
 
   private setupSubscriptions() {
-    const formatSubscription = this.sharedService.getFormatSortCriteria().subscribe(format => {
-      this.format = format;
-      this.currentPage = 1;
-      if (this.isLoading) return;
-      this.fetchData(this.format, this.appliedSearchQuery);
-    });
+    this.subscriptions.add(
+      this.sharedService.getFormatSortCriteria().subscribe(format =>
+        this.updateState({ format, currentPage: 1 })
+      )
+    );
 
-    const searchQuerySubscription = this.sharedService.getSearchQuery().subscribe(query => {
-      this.currentSearchQuery = query;
-      this.appliedSearchQuery = query;
-      this.currentPage = 1;
-      if (this.isLoading) return;
-      this.fetchData(this.format, this.appliedSearchQuery);
-    });
+    this.subscriptions.add(
+      this.sharedService.getSearchQuery().subscribe(query =>
+        this.updateState({ searchQuery: query, currentPage: 1 })
+      )
+    );
 
-    const mainSortSubscription = this.sharedService.getMainSortCriteria().subscribe(criteria => {
-      this.mainSortCriteria = criteria;
-      if (!this.isLoading) {
-        this.fetchData(this.format, this.appliedSearchQuery);
-      }
-    });
+    this.subscriptions.add(
+      this.sharedService.getMainSortCriteria().subscribe(mainSort =>
+        this.updateState({ mainSort })
+      )
+    );
 
-    const alphaSortSubscription = this.sharedService.getAlphaSortCriteria().subscribe(criteria => {
-      this.alphaSortCriteria = criteria;
-      if (this.isLoading) return;
-      this.fetchData(this.format, this.appliedSearchQuery);
-    });
+    this.subscriptions.add(
+      this.sharedService.getAlphaSortCriteria().subscribe(alphaSort => 
+        this.updateState({ alphaSort: alphaSort as 'ascending' | 'descending' })
+      )
+    );
 
-    const priceSortSubscription = this.sharedService.getPriceSortCriteria().subscribe(criteria => {
-      this.priceSortCriteria = criteria;
-      if (this.isLoading) return;
-      this.fetchData(this.format, this.appliedSearchQuery);
-    });
+    this.subscriptions.add(
+      this.sharedService.getPriceSortCriteria().subscribe(priceSort =>
+        this.updateState({ priceSort: priceSort as 'none' | 'ascending' | 'descending' })
+      )
+    );
 
-    const pageServiceSubscription = this.pageService.currentPage$.subscribe(page => {
-      if (this.currentPage !== page) {
-        this.currentPage = page;
-        this.pageService.changePage(this.currentPage);
-        if (this.isLoading) return;
-        this.fetchData(this.format, this.appliedSearchQuery);
-      }
-    });
+    this.subscriptions.add(
+      this.pageService.currentPage$.subscribe(currentPage =>
+        this.updateState({ currentPage })
+      )
+    );
 
-    const refreshNeededSubscription = this.sharedService.getRefreshNeeded().subscribe(needed => {
-      if (needed) {
-        this.refreshDisplayData();
-      }
-    });
-
-    this.subscriptions.add(formatSubscription)
-    this.subscriptions.add(searchQuerySubscription)
-    this.subscriptions.add(mainSortSubscription)
-    this.subscriptions.add(alphaSortSubscription)
-    this.subscriptions.add(priceSortSubscription)
-    this.subscriptions.add(pageServiceSubscription)
-    this.subscriptions.add(refreshNeededSubscription);
+    this.subscriptions.add(
+      this.sharedService.getRefreshNeeded().subscribe(needed => {
+        if (needed) this.updateState({ currentPage: 1 });
+      })
+    );
   }
 
-  searchForArtist(artistName: string): void {
-    this.currentSearchQuery = this.getFormattedArtistName(artistName);
-    this.appliedSearchQuery = this.currentSearchQuery;
-    this.currentPage = 1;
-    this.fetchData(this.format, this.appliedSearchQuery);
-  }  
-  
-  searchForRecordLabel(recordLabel: string): void {
-    this.currentSearchQuery = recordLabel;
-    this.appliedSearchQuery = recordLabel;
-    this.currentPage = 1;
-    this.fetchData(this.format, this.appliedSearchQuery);
+  searchForArtist(artistName: string) {
+    this.updateState({ searchQuery: this.formatService.formatArtistName(artistName), currentPage: 1 });
+  }
+
+  searchForRecordLabel(recordLabel: string) {
+    this.updateState({ searchQuery: recordLabel, currentPage: 1 });
   }
 
   clearSearch() {
-    this.currentSearchQuery = '';
-    this.appliedSearchQuery = '';
-    this.currentPage = 1;
-    this.fetchData(this.format);
+    this.updateState({ searchQuery: '', currentPage: 1 });
   }
 }

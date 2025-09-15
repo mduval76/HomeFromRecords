@@ -1,7 +1,7 @@
-<div class="display-container">
+<div class="display-container" *ngIf="state$ | async as state">
     <div class="title">
-        <h1 *ngIf="this.currentSearchQuery">Results for {{this.currentSearchQuery}}</h1>
-        <h1 *ngIf="!this.currentSearchQuery">Catalog</h1>
+        <h1 *ngIf="state.searchQuery">Results for {{state.searchQuery}}</h1>
+        <h1 *ngIf="!state.searchQuery">Catalog</h1>
     </div>
     <div class="spinner-container" *ngIf="isLoading" >
         <mat-spinner class="spinner" diameter="40"></mat-spinner>  
