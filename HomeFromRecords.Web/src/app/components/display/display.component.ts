@@ -107,7 +107,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
             this.pageService.setTotalItems(this.totalItems);
             this.pageService.setCurrentData(this.data);
 
-            this.applyClientSideSorting();
             this.isLoading = false;
           },
           error: error => {
@@ -123,20 +122,24 @@ export class DisplayComponent implements OnInit, OnDestroy {
   }
 
   private buildApiUrl(state: DisplayState) {
-    let baseUrl = `${environment.apiUrl}Album/`;
-    let queryParams = `page=${state.currentPage}&itemsPerPage=${state.itemsPerPage}`;
+    const baseUrl = `${environment.apiUrl}Album/paged`;
+    const params = new URLSearchParams();
 
-    if (state.searchQuery) {
-      baseUrl += 'search';
-      queryParams += `&query=${encodeURIComponent(state.searchQuery)}`;
-    } else if (state.format !== 666) {
-      baseUrl += 'format';
-      queryParams += `&albumFormat=${state.format}`;
-    } else {
-      baseUrl += 'paged';
+    params.set('page', state.currentPage.toString());
+    params.set('itemsPerPage', state.itemsPerPage.toString());
+
+    if (state.searchQuery) params.set('searchQuery', state.searchQuery);
+    if (state.format !== 666) params.set('mainFormat', state.format.toString());
+
+    // Sorting
+    if (state.mainSort) params.set('sortBy', state.mainSort);
+    if (state.alphaSort === 'descending') params.set('ascending', 'false');
+    if (state.priceSort !== 'none') {
+      params.set('sortBy', 'Price');
+      params.set('ascending', state.priceSort === 'ascending' ? 'true' : 'false');
     }
 
-    return `${baseUrl}?${queryParams}`;
+    return `${baseUrl}?${params.toString()}`;
   }
 
   private mapEnums(album: any) {
@@ -153,28 +156,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
       albumLength: this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength,
       albumType: this.enums['albumTypes']?.[album.albumType] ?? album.albumType
     };
-  }
-
-  private applyClientSideSorting() {
-    const state = this.state$.getValue();
-
-    // ALPHA
-    let sorted = [...this.data].sort((a, b) => {
-      const compareField = state.mainSort === 'Artist' ? a.artistName : a.title;
-      const compareWith = state.mainSort === 'Artist' ? b.artistName : b.title;
-      let result = compareField.localeCompare(compareWith);
-      if (state.alphaSort === 'descending') result = -result;
-      return result;
-    });
-
-    // PRICE
-    if (state.priceSort !== 'none') {
-      sorted.sort((a, b) =>
-        state.priceSort === 'ascending' ? a.price - b.price : b.price - a.price
-      );
-    }
-
-    this.displayedData = sorted;
   }
 
   getIconUrl(format: string): string {

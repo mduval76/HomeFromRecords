@@ -54,319 +54,88 @@ namespace HomeFromRecords.Core.Repositories {
         }
 
         // PAGED COLLECTION QUERIES
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsPagedAsync(int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
+        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsPagedAsync(
+            int page,
+            int itemsPerPage,
+            string? searchQuery = null,
+            Guid? artistId = null,
+            Guid? labelId = null,
+            string? country = null,
+            MainFormat? mainFormat = null,
+            SubFormat? subFormat = null,
+            Grade? grade = null,
+            ArtistGenre? artistGenre = null,
+            AlbumGenre? albumGenre = null,
+            AlbumLength? albumLength = null,
+            AlbumType? albumType = null,
+            string? sortBy = null,
+            bool ascending = true
+        ) {
             try {
-                var totalCount = await _context.Albums.CountAsync();
-                var pagedAlbums = await _context.Albums
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
+                var query = _context.Albums
+                    .Include(a => a.Artist)
+                    .Include(a => a.RecordLabel)
+                    .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(searchQuery)) {
+                    query = query.Where(a =>
+                        EF.Functions.Like(a.Title, $"%{searchQuery}%") ||
+                        EF.Functions.Like(a.Details, $"%{searchQuery}%") ||
+                        (a.Artist != null && EF.Functions.Like(a.Artist.ArtistName, $"%{searchQuery}%")) ||
+                        (a.RecordLabel != null && EF.Functions.Like(a.RecordLabel.RecordLabelName, $"%{searchQuery}%"))
+                    );
+                }
+
+                if (artistId.HasValue)
+                    query = query.Where(a => a.ArtistId == artistId.Value);
+
+                if (labelId.HasValue)
+                    query = query.Where(a => a.RecordLabelId == labelId.Value);
+
+                if (!string.IsNullOrEmpty(country))
+                    query = query.Where(a => a.Country == country);
+
+                if (mainFormat.HasValue)
+                    query = query.Where(a => a.Format == mainFormat.Value);
+
+                if (subFormat.HasValue)
+                    query = query.Where(a => a.SubFormat == subFormat.Value);
+
+                if (grade.HasValue)
+                    query = query.Where(a => a.MediaGrade == grade.Value || a.SleeveGrade == grade.Value);
+
+                if (artistGenre.HasValue)
+                    query = query.Where(a => a.Artist != null && a.Artist.ArtistGenre == artistGenre.Value);
+
+                if (albumGenre.HasValue)
+                    query = query.Where(a => a.AlbumGenre == albumGenre.Value);
+
+                if (albumLength.HasValue)
+                    query = query.Where(a => a.AlbumLength == albumLength.Value);
+
+                if (albumType.HasValue)
+                    query = query.Where(a => a.AlbumType == albumType.Value);
+
+                var totalCount = await query.CountAsync();
+
+                query = sortBy?.ToLower() switch {
+                    "artist" => ascending ? query.OrderBy(a => a.Artist!.ArtistName) : query.OrderByDescending(a => a.Artist!.ArtistName),
+                    "title" => ascending ? query.OrderBy(a => a.Title) : query.OrderByDescending(a => a.Title),
+                    "price" => ascending ? query.OrderBy(a => a.Price) : query.OrderByDescending(a => a.Price),
+                    "year" => ascending ? query.OrderBy(a => a.ReleaseYear) : query.OrderByDescending(a => a.ReleaseYear),
+                    _ => query.OrderBy(a => a.Artist!.ArtistName).ThenBy(a => a.Title) // default sort
+                };
+
+                var albums = await query
                     .Skip((page - 1) * itemsPerPage)
                     .Take(itemsPerPage)
                     .ToListAsync();
-                return (pagedAlbums, totalCount);
+
+                return (albums, totalCount);
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Error retrieving paged albums");
                 throw new Exception("An error occurred while retrieving paged albums.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByArtistIdAsync(Guid artistId, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE, int? albumFormat = null) {
-            try {
-                var query = _context.Albums.Where(a => a.ArtistId == artistId);
-                if (albumFormat.HasValue) query = query.Where(a => a.Format == (MainFormat)albumFormat.Value);
-
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by artist ID {ArtistId}", artistId);
-                throw new Exception("An error occurred while retrieving albums by artist.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByCountryAsync(string country, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums.Where(a => a.Country == country);
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by country {Country}", country);
-                throw new Exception("An error occurred while retrieving albums by country.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByRecordLabelIdAsync(Guid labelId, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums.Where(a => a.RecordLabelId == labelId);
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by record label ID {LabelId}", labelId);
-                throw new Exception("An error occurred while retrieving albums by record label.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByMainFormatAsync(MainFormat mainFormat, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums.Where(a => a.Format == mainFormat);
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by main format {Format}", mainFormat);
-                throw new Exception("An error occurred while retrieving albums by main format.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsBySubFormatAsync(SubFormat subFormat, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums.Where(a => a.SubFormat == subFormat);
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by sub format {SubFormat}", subFormat);
-                throw new Exception("An error occurred while retrieving albums by sub format.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByGradeAsync(Grade grade, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums.Where(a => a.MediaGrade == grade || a.SleeveGrade == grade);
-                var totalCount = await query.CountAsync();
-
-                var pagedAlbums = await query
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (pagedAlbums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by grade {Grade}", grade);
-                throw new Exception("An error occurred while retrieving albums by grade.");
-            }
-        }
-
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByArtistGenreAsync(ArtistGenre artistGenre, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var artistIds = await _context.Artists
-                    .Where(a => a.ArtistGenre == artistGenre)
-                    .Select(a => a.ArtistId)
-                    .ToListAsync();
-
-                var query = _context.Albums
-                    .Where(a => artistIds.Contains(a.ArtistId))
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await query.CountAsync();
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by artist genre {ArtistGenre}", artistGenre);
-                throw new Exception("An error occurred while retrieving albums by artist genre.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByAlbumGenreAsync(AlbumGenre albumGenre, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums
-                    .Where(a => a.AlbumGenre == albumGenre)
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await query.CountAsync();
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by album genre {AlbumGenre}", albumGenre);
-                throw new Exception("An error occurred while retrieving albums by album genre.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByAlbumLengthAsync(AlbumLength albumLength, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums
-                    .Where(a => a.AlbumLength == albumLength)
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await query.CountAsync();
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by album length {AlbumLength}", albumLength);
-                throw new Exception("An error occurred while retrieving albums by album length.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByAlbumTypeAsync(AlbumType albumType, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums
-                    .Where(a => a.AlbumType == albumType)
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await query.CountAsync();
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by album type {AlbumType}", albumType);
-                throw new Exception("An error occurred while retrieving albums by album type.");
-            }
-        }
-
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetAlbumsByFormatAndGradeAsync(MainFormat mainFormat, Grade grade, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums
-                    .Where(a => a.Format == mainFormat && a.MediaGrade == grade)
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await query.CountAsync();
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving albums by format {Format} and grade {Grade}", mainFormat, grade);
-                throw new Exception("An error occurred while retrieving albums by format and grade.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetSearchAlbumsAsync(string query, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE, int? albumFormat = null) {
-            try {
-                var albumsQuery = _context.Albums
-                    .Include(a => a.Artist)
-                    .Include(a => a.RecordLabel)
-                    .Where(a =>
-                        EF.Functions.Like(a.Title, $"%{query}%") ||
-                        EF.Functions.Like(a.Details, $"%{query}%") ||
-                        (a.Artist != null && EF.Functions.Like(a.Artist.ArtistName, $"%{query}%")) ||
-                        (a.RecordLabel != null && EF.Functions.Like(a.RecordLabel.RecordLabelName, $"%{query}%"))
-                    );
-
-                if (albumFormat.HasValue)
-                    albumsQuery = albumsQuery.Where(a => a.Format == (MainFormat)albumFormat.Value);
-
-                albumsQuery = albumsQuery
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title);
-
-                var totalCount = await albumsQuery.CountAsync();
-                var albums = await albumsQuery
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(itemsPerPage)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error searching albums for query {Query}", query);
-                throw new Exception("An error occurred while searching albums.");
-            }
-        }
-
-        public async Task<(IEnumerable<Album> Albums, int TotalCount)> GetRandomAlbumsAsync(int count, int page = 1, int itemsPerPage = Constants.ITEMS_PER_PAGE) {
-            try {
-                var query = _context.Albums
-                    .OrderBy(a => Guid.NewGuid());
-
-                var totalCount = await query.CountAsync();
-
-                var albums = await query
-                    .Skip((page - 1) * itemsPerPage)
-                    .Take(Math.Min(itemsPerPage, count))
-                    .OrderBy(a => a.Artist!.ArtistName)
-                    .ThenBy(a => a.Title)
-                    .ToListAsync();
-
-                return (albums, totalCount);
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving random albums");
-                throw new Exception("An error occurred while retrieving random albums.");
-            }
-        }
-
-        public async Task<int> GetAlbumCountAsync() {
-            try {
-                return await _context.Albums.CountAsync();
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error counting albums");
-                throw new Exception("An error occurred while counting albums.");
             }
         }
 
