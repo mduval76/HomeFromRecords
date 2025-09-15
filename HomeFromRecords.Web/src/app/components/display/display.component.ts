@@ -4,8 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Subscription, BehaviorSubject, combineLatest } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subscription, BehaviorSubject } from 'rxjs';
+import { distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ApiService } from '../../services/api/api.service';
 import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
@@ -53,10 +53,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
   totalItems = 0;
   isLoading = false;
   imageClasses: Record<string, string> = {};
-
-  alphaSortCriteria = 'ascending';
-  mainSortCriteria = 'Artist';
-  priceSortCriteria = 'none';
 
   private subscriptions = new Subscription();
 
@@ -132,11 +128,12 @@ export class DisplayComponent implements OnInit, OnDestroy {
     if (state.format !== 666) params.set('mainFormat', state.format.toString());
 
     // Sorting
-    if (state.mainSort) params.set('sortBy', state.mainSort);
-    if (state.alphaSort === 'descending') params.set('ascending', 'false');
     if (state.priceSort !== 'none') {
-      params.set('sortBy', 'Price');
+      params.set('sortBy', 'price');
       params.set('ascending', state.priceSort === 'ascending' ? 'true' : 'false');
+    } else {
+      params.set('sortBy', this.mapSortField(state.mainSort));
+      params.set('ascending', state.alphaSort === 'ascending' ? 'true' : 'false');
     }
 
     return `${baseUrl}?${params.toString()}`;
@@ -171,63 +168,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
   private updateState(partial: Partial<DisplayState>) {
     this.state$.next({ ...this.state$.getValue(), ...partial });
   }
-
-  fetchData(state: DisplayState) {
-    this.isLoading = true;
-
-    let baseUrl = `${environment.apiUrl}Album/`;
-    let queryParams = `page=${state.currentPage}&itemsPerPage=${state.itemsPerPage}`;
-
-    if (state.searchQuery) {
-      baseUrl += 'search';
-      queryParams += `&query=${encodeURIComponent(state.searchQuery)}`;
-    } else if (state.format !== 666) {
-      baseUrl += 'format';
-      queryParams += `&albumFormat=${state.format}`;
-    } else {
-      baseUrl += 'paged';
-    }
-
-    const url = `${baseUrl}?${queryParams}`;
-
-    this.apiService.getData(url).subscribe({
-      next: (response: any) => {
-        if (!response || !Array.isArray(response.items)) {
-          console.error('Invalid API response', response);
-          this.isLoading = false;
-          return;
-        }
-
-        this.data = response.items.map((album: any) => ({
-          ...album,
-          format: this.enums['mainFormats']?.[album.format] ?? album.format,
-          subFormat: this.enums['subFormats']?.[album.subFormat] ?? album.subFormat,
-          vinylSpeed: this.enums['vinylSpeeds']?.[album.vinylSpeed] ?? album.vinylSpeed,
-          mediaGrade: this.enums['grades']?.[album.mediaGrade] ?? album.mediaGrade,
-          sleeveGrade: this.enums['grades']?.[album.sleeveGrade] ?? album.sleeveGrade,
-          packageType: this.enums['packageTypes']?.[album.packageType] ?? album.packageType,
-          artistGenre: this.enums['artistGenres']?.[album.artistGenre] ?? album.artistGenre,
-          albumGenre: this.enums['albumGenres']?.[album.albumGenre] ?? album.albumGenre,
-          albumLength: this.enums['albumLengths']?.[album.albumLength] ?? album.albumLength,
-          albumType: this.enums['albumTypes']?.[album.albumType] ?? album.albumType
-        }));
-
-        this.data.forEach(album => this.updateImageClass(album.imgFileExt));
-
-        this.totalItems = response.totalItems;
-        this.pageService.setTotalItems(this.totalItems);
-        this.pageService.setCurrentData(this.data);
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-
+  
   fetchEnums() {
     const enumsUrl = `${environment.apiUrl}Constants/enums`;
     this.apiService.getData(enumsUrl).subscribe({
@@ -260,20 +201,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
   
   handleImageError(event: Event, defaultImageUrl: string) {
     (event.target as HTMLImageElement).src = defaultImageUrl;
-  }
-
-  sortData(data: any[], mainCriteria: string, reverseAlphabetical: boolean): any[] {
-    let sorted = [...data].sort((a, b) =>
-      mainCriteria === 'Artist' ? a.artistName.localeCompare(b.artistName) : a.title.localeCompare(b.title)
-    );
-    if (reverseAlphabetical) sorted.reverse();
-    return sorted;
-  }
-
-  applyPriceSorting(data: any[], priceCriteria: string): any[] {
-    if (priceCriteria === 'none') return data;
-    data.sort((a, b) => (priceCriteria === 'ascending' ? a.price - b.price : b.price - a.price));
-    return data;
   }
 
   getFormattedArtistName(str: string) {
@@ -367,5 +294,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   clearSearch() {
     this.updateState({ searchQuery: '', currentPage: 1 });
+  }
+
+  private mapSortField(mainSort: string): string {
+    switch (mainSort) {
+      case 'Artist': return 'artistName';
+      case 'Album': return 'title';
+      default: return 'artistName';
+    }
   }
 }
