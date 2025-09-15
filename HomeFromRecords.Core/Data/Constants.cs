@@ -122,5 +122,8 @@
             WORLD,
             UNSPECIFIED
         }
+
+        //==================( PAGE )==================
+        public const int ITEMS_PER_PAGE = 12;
     }
 }
