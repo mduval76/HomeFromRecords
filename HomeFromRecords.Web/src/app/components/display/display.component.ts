@@ -207,6 +207,10 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return this.formatService.formatArtistName(str);
   }
 
+  get isEmpty(): boolean {
+    return this.data.length === 0;
+  }
+
   addToCart(album: any) {
     const cartItem: CartItem = {
       id: album.albumId,
@@ -255,7 +259,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.sharedService.getMainSortCriteria().subscribe(mainSort =>
-        this.updateState({ mainSort })
+        this.updateState({ mainSort, currentPage: 1 })
       )
     );
 

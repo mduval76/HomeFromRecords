@@ -1,13 +1,14 @@
 <div class="display-container" *ngIf="state$ | async as state">
     <div class="title">
-        <h1 *ngIf="state.searchQuery">Results for {{state.searchQuery}}</h1>
+        <h1 *ngIf="state.searchQuery && !isEmpty">Results for {{state.searchQuery}}</h1>
         <h1 *ngIf="!state.searchQuery">Catalog</h1>
+        <h1 *ngIf="isEmpty">OOPS! No results for these choices!</h1>
     </div>
     <div class="spinner-container" *ngIf="isLoading" >
         <mat-spinner class="spinner" diameter="40"></mat-spinner>  
     </div>
     <div *ngIf="!isLoading">
-        <div class="pagination-container">
+        <div class="pagination-container" *ngIf="!isEmpty">
             <app-pagination></app-pagination>   
         </div>
         <div class="flex-container">
@@ -37,7 +38,7 @@
                 </mat-card-content>
             </mat-card>
         </div>
-        <div class="pagination-container">
+        <div class="pagination-container" *ngIf="!isEmpty">
             <app-pagination></app-pagination>   
         </div>
     </div>

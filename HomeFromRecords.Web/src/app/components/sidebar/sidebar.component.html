@@ -10,18 +10,18 @@
     </mat-menu>
     <div class="icon-container">
       <div class="format-section">
-        <img [src]="activeFormat === 666 ? '../../../assets/images/icons/all2.png' : '../../../assets/images/icons/all.png'" (click)="setFormatSortCriteria(666)">
-        <img [src]="activeFormat === 0 ? '../../../assets/images/icons/LP2.png' : '../../../assets/images/icons/LP.png'" (click)="setFormatSortCriteria(0)">
-        <img [src]="activeFormat === 1 ? '../../../assets/images/icons/CD2.png' : '../../../assets/images/icons/CD.png'" (click)="setFormatSortCriteria(1)">
-        <img [src]="activeFormat === 2 ? '../../../assets/images/icons/K72.png' : '../../../assets/images/icons/K7.png'" (click)="setFormatSortCriteria(2)">
+        <img [src]="activeFormat === 666 ? '../../../assets/images/icons/all.png' : '../../../assets/images/icons/all_Unselected.png'" (click)="setFormatSortCriteria(666)">
+        <img [src]="activeFormat === 0 ? '../../../assets/images/icons/LP.png' : '../../../assets/images/icons/LP_Unselected.png'" (click)="setFormatSortCriteria(0)">
+        <img [src]="activeFormat === 1 ? '../../../assets/images/icons/CD.png' : '../../../assets/images/icons/CD_Unselected.png'" (click)="setFormatSortCriteria(1)">
+        <img [src]="activeFormat === 2 ? '../../../assets/images/icons/K7.png' : '../../../assets/images/icons/K7_Unselected.png'" (click)="setFormatSortCriteria(2)">
       </div>
       <div class="alpha-section">
-        <img [src]="alphaAscendingActive ? '../../../assets/images/icons/ABC2.png' : '../../../assets/images/icons/ABC.png'" (click)="setAlphaSortCriteria('ascending')">
-        <img [src]="alphaDescendingActive ? '../../../assets/images/icons/ZYX2.png' : '../../../assets/images/icons/ZYX.png'" (click)="setAlphaSortCriteria('descending')">
+        <img [src]="alphaAscendingActive ? '../../../assets/images/icons/ABC.png' : '../../../assets/images/icons/ABC_Unselected.png'" (click)="setAlphaSortCriteria('ascending')">
+        <img [src]="alphaDescendingActive ? '../../../assets/images/icons/ZYX.png' : '../../../assets/images/icons/ZYX_Unselected.png'" (click)="setAlphaSortCriteria('descending')">
       </div>
       <div class="price-section">
-        <img [src]="priceAscendingActive ? '../../../assets/images/icons/lohi2.png' : '../../../assets/images/icons/lohi.png'" (click)="setPriceSortCriteria('ascending')">
-        <img [src]="priceDescendingActive ? '../../../assets/images/icons/hilo2.png' : '../../../assets/images/icons/hilo.png'" (click)="setPriceSortCriteria('descending')">
+        <img [src]="priceAscendingActive ? '../../../assets/images/icons/lohi.png' : '../../../assets/images/icons/lohi_Unselected.png'" (click)="setPriceSortCriteria('ascending')">
+        <img [src]="priceDescendingActive ? '../../../assets/images/icons/hilo.png' : '../../../assets/images/icons/hilo_Unselected.png'" (click)="setPriceSortCriteria('descending')">
       </div>
     </div>
   </mat-drawer>
