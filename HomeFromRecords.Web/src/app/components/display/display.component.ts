@@ -8,6 +8,7 @@ import { ApiService } from '../../services/api/api.service';
 import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
 import { PageService } from '../../services/page/page.service';
+import { AlbumService, PaginatedAlbums } from '../../services/album/album.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { DetailComponent } from '../detail/detail.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -45,7 +46,19 @@ export class DisplayComponent implements OnInit, OnDestroy {
   enums: Record<string, EnumDictionary> = {};
   format = 666;
   formattedArtistName = '';
+  cols = 3;
+  currentSearchQuery = '';
+  appliedSearchQuery = '';
+  data: any[] = [];
+  defaultImg = '../../../assets/images/defaults/default.webp';
+  enums: Record<string, EnumDictionary> = {};
+  format = 666;
+  formattedArtistName = '';
   imageClasses: Record<string, string> = {};
+  isLoading = false;
+  currentPage = 1;
+  itemsPerPage = 12;
+  totalItems = 0;
   isLoading = false;
   currentPage = 1;
   itemsPerPage = 12;
@@ -54,11 +67,16 @@ export class DisplayComponent implements OnInit, OnDestroy {
   alphaSortCriteria = 'ascending';
   mainSortCriteria = 'Artist';
   priceSortCriteria = 'none';
+  alphaSortCriteria = 'ascending';
+  mainSortCriteria = 'Artist';
+  priceSortCriteria = 'none';
 
+  private subscriptions = new Subscription();
   private subscriptions = new Subscription();
 
   constructor(
     private apiService: ApiService,
+    private albumService: AlbumService,
     private formatService: FormatService,
     private orderService: OrderService,
     private pageService: PageService,
@@ -67,6 +85,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
+    this.fetchData();
     this.fetchData();
     this.fetchEnums();
     this.setupSubscriptions();
@@ -154,6 +173,23 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
 
   fetchEnums() {
+  const enumsUrl = `${environment.apiUrl}Constants/enums`;
+  this.apiService.getData(enumsUrl).subscribe({
+    next: (response: any) => {
+      this.enums = {};
+      for (const enumType in response) {
+        if (response.hasOwnProperty(enumType)) {
+          this.enums[enumType] = response[enumType].reduce((acc: EnumDictionary, enumItem: EnumItem) => {
+            acc[enumItem.value] = enumItem.name;
+            return acc;
+          }, {});
+        }
+      }
+    },
+    error: (error) => console.error('Error fetching enums:', error)
+  });
+}
+
   const enumsUrl = `${environment.apiUrl}Constants/enums`;
   this.apiService.getData(enumsUrl).subscribe({
     next: (response: any) => {
