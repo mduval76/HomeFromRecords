@@ -7,7 +7,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ApiService } from '../../services/api/api.service';
-import { FormatService } from '../../services/format/format.service';
 import { OrderService, CartItem } from '../../services/order/order.service';
 import { PageService } from '../../services/page/page.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -68,7 +67,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService: ApiService,
-    private formatService: FormatService,
     private orderService: OrderService,
     private pageService: PageService,
     private sharedService: SharedService,
@@ -203,10 +201,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
     (event.target as HTMLImageElement).src = defaultImageUrl;
   }
 
-  getFormattedArtistName(str: string) {
-    return this.formatService.formatArtistName(str);
-  }
-
   get isEmpty(): boolean {
     return this.data.length === 0;
   }
@@ -289,7 +283,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
   }
 
   searchForArtist(artistName: string) {
-    this.updateState({ searchQuery: this.formatService.formatArtistName(artistName), currentPage: 1 });
+    this.updateState({ searchQuery: artistName, currentPage: 1 });
   }
 
   searchForRecordLabel(recordLabel: string) {

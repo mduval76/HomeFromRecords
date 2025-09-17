@@ -6,6 +6,6 @@ namespace HomeFromRecords.Core.Data.Entities {
         public string ArtistName { get; set; } = "-";
         public ArtistGenre ArtistGenre { get; set; } // Main genre
 
-        public List<RecordLabel> RecordLabels { get; set; }
+        public List<RecordLabel>? RecordLabels { get; set; }
     }
 }

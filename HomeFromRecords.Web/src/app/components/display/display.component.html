@@ -19,7 +19,7 @@
                 <mat-card-header class="flex-header">
                     <div mat-card-avatar class="format-icon" [style.background-image]="getIconUrl(item.format)"></div>
                     <mat-card-title>
-                        <a (click)="searchForArtist(item.artistName)">{{this.getFormattedArtistName(item.artistName)}}</a>
+                        <a (click)="searchForArtist(item.artistName)">{{item.artistName}}</a>
                     </mat-card-title>
                     <mat-card-subtitle>{{item.title}}</mat-card-subtitle>
                     <mat-card-subtitle style="color: darkslategrey">

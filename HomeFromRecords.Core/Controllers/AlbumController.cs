@@ -2,6 +2,7 @@
 using HomeFromRecords.Core.Data.Entities;
 using HomeFromRecords.Core.Dtos;
 using HomeFromRecords.Core.Interfaces;
+using HomeFromRecords.Core.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using static HomeFromRecords.Core.Data.Constants;
 
@@ -186,6 +187,8 @@ namespace HomeFromRecords.Core.Controllers {
             var albumDtos = albums.Select(album => {
                 var artist = artistDict[album.ArtistId];
                 var recordLabel = recordLabelDict[album.RecordLabelId];
+                var formattedArtistName = ArtistNameHelper.FormatForUI(artist.ArtistName);
+
                 return new AlbumDto(
                     album.AlbumId,
                     album.Title,
@@ -197,7 +200,7 @@ namespace HomeFromRecords.Core.Controllers {
                     album.MatrixNumber,
                     GetImgUrl(album.ImgFileExt),
                     album.Details,
-                    artist.ArtistName,
+                    formattedArtistName,
                     recordLabel.RecordLabelName,
                     album.MediaGrade,
                     album.SleeveGrade,
